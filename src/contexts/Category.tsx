@@ -1,4 +1,5 @@
-import React, { createContext, useEffect, useState, useContext } from "react"
+"use client"
+import { createContext, useEffect, useState, useContext } from "react"
 import { categoryService } from "@/services/category"
 import { ReactNode } from "react"
 
