@@ -1,0 +1,9 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///Users/narit/Desktop/pos-frontend/src/app/product/edit/%5Bid%5D/page.tsx"],"sourcesContent":["\"use client\"\nimport ProductForm from \"@/components/product/ProductForm\"\nimport { redirect, useParams } from \"next/navigation\"\n\nexport default function Page() {\n    const { id } = useParams()\n    console.log(id)\n\n    const navBack = () => {\n        redirect(\"/product\")\n    }\n\n    return (\n        <div>\n            <p>Edit product id:{id}</p>\n            <button\n                type=\"button\"\n                className=\"rounded border p-2\"\n                onClick={navBack}\n            >\n                Back\n            </button>\n            {/* <ProductForm productId={id} /> */}\n        </div>\n    )\n}\n"],"names":[],"mappings":";;;;AAEA;;;AAFA;;AAIe,SAAS;;IACpB,MAAM,EAAE,EAAE,EAAE,GAAG,CAAA,GAAA,qIAAA,CAAA,YAAS,AAAD;IACvB,QAAQ,GAAG,CAAC;IAEZ,MAAM,UAAU;QACZ,CAAA,GAAA,qIAAA,CAAA,WAAQ,AAAD,EAAE;IACb;IAEA,qBACI,6LAAC;;0BACG,6LAAC;;oBAAE;oBAAiB;;;;;;;0BACpB,6LAAC;gBACG,MAAK;gBACL,WAAU;gBACV,SAAS;0BACZ;;;;;;;;;;;;AAMb;GArBwB;;QACL,qIAAA,CAAA,YAAS;;;KADJ"}},
+    {"offset": {"line": 63, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}},
+    {"offset": {"line": 73, "column": 0}, "map": {"version":3,"sources":["file:///Users/narit/Desktop/pos-frontend/node_modules/next/navigation.js"],"sourcesContent":["module.exports = require('./dist/client/components/navigation')\n"],"names":[],"mappings":"AAAA,OAAO,OAAO","ignoreList":[0]}},
+    {"offset": {"line": 74, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
+}
