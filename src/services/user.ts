@@ -1,53 +1,41 @@
 import axios from "axios"
-import { validateRegister } from "../utils/validateRegister"
-import { User } from "../interfaces/User"
-import { LOGIN_URL, REGISTER_URL } from "./apiUrls"
-import { LoginDetail } from "../interfaces/User"
+import { LOGOUT_URL, RELOGIN_URL } from "./apiUrls"
+import { ApiDataResponse, ApiResponse } from "../interfaces/ApiResponse"
+import { UserAuth } from "../interfaces/User"
 
-export const userServices = {
-    register: async (newUser: User) => {
-        //validate newUser
-        const newUserValid = validateRegister(newUser)
-        if (!newUserValid) {
-            alert("user is not valid to register")
-            return
-        }
-        //try create new user
-
-        const config = {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(newUser),
-        }
-
+export const userService = {
+    logout: async () => {
         try {
-            const req = await fetch(REGISTER_URL, config)
-            console.log(req)
+            const res = await axios.post<ApiResponse>(LOGOUT_URL, undefined, {
+                withCredentials: true,
+            })
+            console.log("from logout", res.data)
 
-            if (req.ok) {
-                const res = await req.json()
-                return res
-            } else {
-                const res = await req.json()
-                return res
+            if (res.data.success) {
+                console.log("logout complete")
+                return true
             }
         } catch (error) {
-            console.log(error)
+            console.log("logout error", error)
             return false
         }
     },
-    login: async (loginDetail: LoginDetail) => {
+    relogin: async () => {
         try {
-            const res = await axios.post(LOGIN_URL, loginDetail, {
-                withCredentials: true,
-            })
-            if (res.status === 200) {
-                console.log(res.data)
-                return { success: true, data: res.data }
-            } else {
-                console.log("res not ok")
-                return { success: false, data: undefined }
+            const res = await axios.get<ApiDataResponse<UserAuth>>(
+                RELOGIN_URL,
+                {
+                    withCredentials: true,
+                },
+            )
+            console.log(res)
+            if (res.data.success) {
+                console.log(res.data.message)
+                return res.data.data as UserAuth
             }
-        } catch (error) {}
+            return { username: "No data" } as UserAuth
+        } catch (error) {
+            return { username: "Error" } as UserAuth
+        }
     },
 }

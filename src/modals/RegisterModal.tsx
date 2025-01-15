@@ -52,99 +52,90 @@ function RegisterModal() {
                         justifyContent: "center",
                     }}
                 >
-                    <Box
-                        sx={{
-                            bgcolor: "red",
-                            width: "80%",
-                            display: "flex",
-                            justifyContent: "center",
-                        }}
-                    >
-                        <FormControl>
-                            <TextField
-                                type="text"
-                                id="name"
-                                label="Name"
-                                variant="standard"
-                                value={register.name}
-                                onChange={handleChange}
-                                required
-                            />
-                            <TextField
-                                type="text"
-                                id="surname"
-                                label="Surname"
-                                variant="standard"
-                                value={register.surname}
-                                onChange={handleChange}
-                                required
-                            />
-                            <TextField
-                                type="number"
-                                id="phone_number"
-                                label="Phone Number"
-                                variant="standard"
-                                value={register.phone_number}
-                                onChange={handleChange}
-                                sx={{
-                                    "& input[type=number]": {
-                                        MozAppearance: "textfield",
+                    <FormControl>
+                        <TextField
+                            type="text"
+                            id="name"
+                            label="Name"
+                            variant="standard"
+                            value={register.name}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            type="text"
+                            id="surname"
+                            label="Surname"
+                            variant="standard"
+                            value={register.surname}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            type="number"
+                            id="phone_number"
+                            label="Phone Number"
+                            variant="standard"
+                            value={register.phone_number}
+                            onChange={handleChange}
+                            sx={{
+                                "& input[type=number]": {
+                                    MozAppearance: "textfield",
+                                },
+                                "& input[type=number]::-webkit-outer-spin-button":
+                                    {
+                                        WebkitAppearance: "none",
+                                        margin: 0,
                                     },
-                                    "& input[type=number]::-webkit-outer-spin-button":
-                                        {
-                                            WebkitAppearance: "none",
-                                            margin: 0,
-                                        },
-                                    "& input[type=number]::-webkit-inner-spin-button":
-                                        {
-                                            WebkitAppearance: "none",
-                                            margin: 0,
-                                        },
-                                }}
-                                required
-                            />
-                            <TextField
-                                type="email"
-                                id="email"
-                                label="Email"
-                                variant="standard"
-                                value={register.email}
-                                onChange={handleChange}
-                                required
-                            />
-                            <TextField
-                                type="text"
-                                id="username"
-                                label="Username"
-                                variant="standard"
-                                value={register.username}
-                                onChange={handleChange}
-                                required
-                            />
-                            <TextField
-                                type="password"
-                                id="password"
-                                label="Password"
-                                variant="standard"
-                                value={register.password}
-                                onChange={handleChange}
-                                required
-                            />
-                            <Button
-                                variant="contained"
-                                onClick={handleSubmit}
-                                sx={{ marginBottom: "4px" }}
-                            >
-                                Submit
-                            </Button>
-                            <Button
-                                variant="outlined"
-                                onClick={() => handleClose()}
-                            >
-                                Cancel
-                            </Button>
-                        </FormControl>
-                    </Box>
+                                "& input[type=number]::-webkit-inner-spin-button":
+                                    {
+                                        WebkitAppearance: "none",
+                                        margin: 0,
+                                    },
+                            }}
+                            required
+                        />
+                        <TextField
+                            type="email"
+                            id="email"
+                            label="Email"
+                            variant="standard"
+                            value={register.email}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            type="text"
+                            id="username"
+                            label="Username"
+                            variant="standard"
+                            value={register.username}
+                            onChange={handleChange}
+                            required
+                        />
+                        <TextField
+                            type="password"
+                            id="password"
+                            label="Password"
+                            variant="standard"
+                            value={register.password}
+                            onChange={handleChange}
+                            required
+                        />
+                        <Button
+                            variant="contained"
+                            onClick={handleSubmit}
+                            sx={{ marginBottom: "4px" }}
+                        >
+                            Submit
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            onClick={() => handleClose()}
+                        >
+                            Cancel
+                        </Button>
+                    </FormControl>
                     <CloseIcon
                         onClick={handleClose}
                         sx={{

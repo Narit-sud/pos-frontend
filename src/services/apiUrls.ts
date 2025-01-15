@@ -1,6 +1,15 @@
-const MAIN_URL= "http://localhost:3333/";
-export const REGISTER_URL = `${MAIN_URL}register`;
-export const USER_URL = `${MAIN_URL}user`;
-export const LOGIN_URL = `${MAIN_URL}login`;
-export const PRODUCT_URL = `${MAIN_URL}product`;
-export const CATEGORY_URL = `${MAIN_URL}category`;
+const MAIN_URL = "http://localhost:3333"
+
+// auth
+const AUTH_URL = `${MAIN_URL}/auth`
+export const VERIFY_TOKEN_URL = `${AUTH_URL}/verifyToken`
+export const TEST_COOKIE = `${AUTH_URL}/testCookie`
+export const REGISTER_URL = `${AUTH_URL}/register`
+export const LOGIN_URL = `${AUTH_URL}/login`
+export const LOGOUT_URL = `${AUTH_URL}/logout`
+export const RELOGIN_URL = `${AUTH_URL}/relogin`
+// product
+export const PRODUCT_URL = `${MAIN_URL}/product`
+export const CATEGORY_URL = `${MAIN_URL}/category`
+// user
+export const USER_URL = `${MAIN_URL}/user`

@@ -1,14 +1,7 @@
-import {
-    Modal,
-    Box,
-    TextField,
-    Button,
-    FormControl,
-    Container,
-} from "@mui/material"
+import { Modal, Box, TextField, Button, FormControl } from "@mui/material"
 import { Close as CloseIcon, Login } from "@mui/icons-material"
 import { LoginDetail } from "../interfaces/LoginDetail"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useAuth } from "../contexts/AuthContext"
 
 function LoginModal() {
@@ -31,6 +24,8 @@ function LoginModal() {
     const handleFotget = () => {
         console.log("forget")
     }
+
+    useEffect(() => {}, [login])
     return (
         <>
             <Button variant="contained" onClick={handleOpen}>
@@ -54,38 +49,29 @@ function LoginModal() {
                         justifyContent: "center",
                     }}
                 >
-                    <Box
-                        sx={{
-                            bgcolor: "red",
-                            width: "80%",
-                            display: "flex",
-                            justifyContent: "center",
-                        }}
-                    >
-                        <FormControl>
-                            <TextField
-                                type="text"
-                                id="username"
-                                label="Username"
-                                value={loginDetail.username}
-                                onChange={handleChange}
-                                fullWidth
-                            />
-                            <TextField
-                                type="password"
-                                id="password"
-                                label="Password"
-                                value={loginDetail.password}
-                                onChange={handleChange}
-                            />
-                            <Button onClick={handleLogin} variant="contained">
-                                Login
-                            </Button>
-                            <Button onClick={handleFotget} variant="outlined">
-                                Forget pasword
-                            </Button>
-                        </FormControl>
-                    </Box>
+                    <FormControl>
+                        <TextField
+                            type="text"
+                            id="username"
+                            label="Username"
+                            value={loginDetail.username}
+                            onChange={handleChange}
+                            fullWidth
+                        />
+                        <TextField
+                            type="password"
+                            id="password"
+                            label="Password"
+                            value={loginDetail.password}
+                            onChange={handleChange}
+                        />
+                        <Button onClick={handleLogin} variant="contained">
+                            Login
+                        </Button>
+                        <Button onClick={handleFotget} variant="outlined">
+                            Forget pasword
+                        </Button>
+                    </FormControl>
                     <CloseIcon
                         onClick={handleClose}
                         sx={{

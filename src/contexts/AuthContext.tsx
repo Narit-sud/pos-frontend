@@ -1,41 +1,75 @@
-import { createContext, useState, useContext, ReactNode } from "react";
-import { LoginDetail } from "../interfaces/LoginDetail";
-import { userServices } from "../services/user";
-import { User } from "../interfaces/User";
+import {
+    createContext,
+    useState,
+    useContext,
+    ReactNode,
+    useEffect,
+} from "react"
+import { LoginDetail } from "../interfaces/LoginDetail"
+import { publicServices } from "../services/public"
+import { User, UserAuth } from "../interfaces/User"
+import { userService } from "../services/user"
 
 interface AuthContextType {
-    user: User | null;
-    login: (loginDetail: LoginDetail) => void;
-    logout: () => void;
+    user: User | null
+    setUser: any
+    login: (loginDetail: LoginDetail) => Promise<boolean>
+    logout: () => Promise<boolean>
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<UserAuth>({} as UserAuth)
 
     const login = async (loginDetail: LoginDetail) => {
-        const tryLogin = await userServices.login(loginDetail);
-        if (tryLogin?.success) {
-            setUser(tryLogin.data.data);
-            console.log("get and set auth success");
-            console.log(user);
+        const isLogin = (await publicServices.login(loginDetail)) as {
+            success: boolean
+            message: string
+            data: UserAuth
         }
-    };
-    const logout = () => setUser(null);
+        console.log(isLogin, "trylogin")
 
+        if (isLogin.success && isLogin.data) {
+            setUser(isLogin.data)
+            return true
+        } else {
+            return false
+        }
+    }
+    const logout = async () => {
+        const isLogout = await userService.logout()
+        if (isLogout) {
+            setUser({} as UserAuth)
+            return true
+        } else {
+            return false
+        }
+    }
+
+    const relogin = async () => {
+        const isLogin = await userService.relogin()
+        if (typeof isLogin !== undefined) {
+            const userData: UserAuth = isLogin
+            setUser(userData)
+        }
+    }
+
+    useEffect(() => {
+        relogin()
+    }, [])
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, setUser, login, logout }}>
             {children}
         </AuthContext.Provider>
-    );
-};
+    )
+}
 
 // Custom hook to use the AuthContext
 export const useAuth = () => {
-    const context = useContext(AuthContext);
+    const context = useContext(AuthContext)
     if (!context) {
-        throw new Error("useAuth must be used within an AuthProvider");
+        throw new Error("useAuth must be used within an AuthProvider")
     }
-    return context;
-};
+    return context
+}
