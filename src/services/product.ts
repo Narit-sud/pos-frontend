@@ -11,6 +11,8 @@ export const productService = {
                 { withCredentials: true },
             )
 
+            console.log(res.data.data)
+
             return res.data.data || null
         } catch (error) {
             console.error("Error fetching products:", error)

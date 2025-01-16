@@ -20,19 +20,18 @@ function ProductPage() {
         setLoading(true)
         const data = await productService.getAll()
         if (data !== null) {
-            // Map the data if necessary to fit the GridRowsProp structure
             const formattedData = data.map((item) => ({
-                id: item.id, // Ensure the id field is present
+                id: item.id,
                 name: item.name,
                 category: item.category,
                 price: item.price,
                 cost: item.cost,
                 stock: item.stock,
-                detail: "View Detail", // Example detail column (you can make it a link or button)
+                detail: "View Detail",
             }))
-            setRows(formattedData) // Update rows with the fetched data
+            setRows(formattedData)
         }
-        setLoading(false) // Set loading state to false once the data is loaded
+        setLoading(false)
     }
 
     useEffect(() => {
@@ -41,17 +40,19 @@ function ProductPage() {
 
     return (
         <div style={{ height: "100vh", width: "100%" }}>
-            {loading ? (
-                <div>Loading...</div> // Show a loading message or spinner
-            ) : (
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    onRowClick={(params) => {
-                        console.log(params.row) // Handle row click event
-                    }}
-                />
-            )}
+            <DataGrid
+                rows={rows}
+                columns={columns}
+                onRowClick={(params) => {
+                    console.log(params.row) // Handle row click event
+                }}
+                slotProps={{
+                    loadingOverlay: {
+                        variant: "linear-progress",
+                        noRowsVariant: "skeleton",
+                    },
+                }}
+            />
         </div>
     )
 }

@@ -35,6 +35,7 @@ export const publicServices = {
             )
 
             const data = res.data
+            console.log(data)
 
             if (data.success) {
                 console.log(res.data)
