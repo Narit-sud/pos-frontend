@@ -27,11 +27,8 @@ export default function ProductFormTw() {
         e.preventDefault()
         if (id === undefined) {
             try {
-                const isCreated = await createProduct(product)
-                if (isCreated.success) {
-                    alert(isCreated.message)
-                    navigate("/app/product")
-                }
+                await createProduct(product)
+                navigate("/app/product")
             } catch (error) {
                 alert(error.data.message)
                 console.error(error)
@@ -123,9 +120,20 @@ export default function ProductFormTw() {
                     onChange={handleChange}
                     className="rounded border px-2 py-4"
                 />
-                <button className="rounded border px-2 py-4" type="submit">
-                    Submit
-                </button>
+                <div className="flex justify-center">
+                    <button className="btn btn-primary" type="submit">
+                        Submit
+                    </button>
+                    <button
+                        type="button"
+                        className="btn"
+                        onClick={() => {
+                            navigate(-1)
+                        }}
+                    >
+                        Back
+                    </button>
+                </div>
             </div>
         </form>
     )

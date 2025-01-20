@@ -9,11 +9,11 @@ export interface Product {
 }
 
 export const emptyProduct: Product = {
-    id: null,
+    id: NaN,
     name: "",
-    category: null,
-    price: null,
-    cost: null,
-    stock: null,
+    category: NaN,
+    price: NaN,
+    cost: NaN,
+    stock: NaN,
     detail: "",
 }
