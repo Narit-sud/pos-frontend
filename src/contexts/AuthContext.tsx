@@ -6,9 +6,9 @@ import {
     useEffect,
 } from "react"
 import { LoginDetail } from "../interfaces/LoginDetail"
-import { publicServices } from "../services/public"
 import { User, UserAuth } from "../interfaces/User"
 import { userService } from "../services/user"
+import { authService } from "../services/auth"
 
 interface AuthContextType {
     user: User | null
@@ -23,20 +23,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<UserAuth>({} as UserAuth)
 
     const login = async (loginDetail: LoginDetail) => {
-        const isLogin = (await publicServices.login(loginDetail)) as {
+        const isLogin = (await authService.login(loginDetail)) as {
             success: boolean
-            message: string
-            data: UserAuth
+            message?: string
         }
-        console.log(isLogin, "trylogin")
-
-        if (isLogin.success && isLogin.data) {
-            setUser(isLogin.data)
+        if (isLogin.success) {
             return true
-        } else {
-            return false
         }
+
+        return false
+        // const isLogin = (await publicServices.login(loginDetail)) as {
+        //     success: boolean
+        //     message: string
+        //     data: UserAuth
+        // }
+        // console.log(isLogin, "trylogin")
+        //
+        // if (isLogin.success && isLogin.data) {
+        //     setUser(isLogin.data)
+        //     return true
+        // } else {
+        //     return false
+        // }
     }
+
     const logout = async () => {
         const isLogout = await userService.logout()
         if (isLogout) {
@@ -48,11 +58,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const relogin = async () => {
-        const isLogin = await userService.relogin()
-        if (typeof isLogin !== undefined) {
-            const userData: UserAuth = isLogin
-            setUser(userData)
-        }
+        // const isLogin = await userService.relogin()
+        // if (typeof isLogin !== undefined) {
+        //     const userData: UserAuth = isLogin
+        //     setUser(userData)
+        // }
     }
 
     useEffect(() => {
