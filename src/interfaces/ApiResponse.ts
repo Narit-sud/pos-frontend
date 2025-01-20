@@ -1,11 +1,11 @@
-export interface ApiResponse {
-    success: boolean
+export interface SuccessResponse<T = any> {
+    success: true
     message: string
-}
-export interface ApiDataResponse<T> extends ApiResponse {
     data: T
 }
-
-export interface ApiErrorResponse<T> extends ApiResponse {
-    error: T
+export interface ErrorResponse {
+    success: false
+    message: string
 }
+
+export type ApiResponse<T> = SuccessResponse<T> | ErrorResponse

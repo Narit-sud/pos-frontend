@@ -1,11 +1,10 @@
 import { Box, Container, Typography, Grid2 as Grid } from "@mui/material"
 import { Outlet } from "react-router"
-import LoginModal from "../../modals/LoginModal"
-import RegisterModal from "../../modals/RegisterModal"
-import { useAuth } from "../../contexts/AuthContext"
-import UserModal from "../../modals/UserModal"
+import LoginModal from "../modals/LoginModal"
+import RegisterModal from "../modals/RegisterModal"
+import { useAuth } from "../contexts/AuthContext"
+import UserModal from "../modals/UserModal"
 import SideBar from "./SideBar"
-import UserButton from "../../components/UserButton"
 
 function MainLayout() {
     const { user } = useAuth()
