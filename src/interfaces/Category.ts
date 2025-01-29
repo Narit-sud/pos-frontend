@@ -5,7 +5,7 @@ export interface Category {
 }
 
 export const emptyCategory = {
-    id: NaN,
+    id: 0,
     name: "",
     detail: "",
 }

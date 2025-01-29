@@ -14,6 +14,7 @@ interface CategoryContextType {
 interface Category {
     id: number
     name: string
+    detail: string | null
 }
 const CategoryContext = createContext<CategoryContextType | undefined>(
     undefined,

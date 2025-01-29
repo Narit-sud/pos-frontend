@@ -27,3 +27,21 @@ export interface UserAuth {
     status: string
     role: string
 }
+
+export interface NewUser {
+    name: string
+    surname: string
+    email: string
+    phone_number: string
+    username: string
+    password: string
+}
+
+export const emptyNewUser: NewUser = {
+    name: "",
+    surname: "",
+    email: "",
+    phone_number: "",
+    username: "",
+    password: "",
+}

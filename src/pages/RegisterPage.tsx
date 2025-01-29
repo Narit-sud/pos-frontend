@@ -7,8 +7,33 @@ import {
     TextField,
     Typography,
 } from "@mui/material"
+import { useState } from "react"
+import { emptyNewUser, NewUser } from "../interfaces/User"
+import { useAuth } from "../contexts/AuthContext"
+import { useNavigate } from "react-router"
 
 function RegisterPage() {
+    const navigate = useNavigate()
+    const { register } = useAuth()
+    const [newUser, setNewUser] = useState<NewUser>(emptyNewUser)
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { id, value } = e.target
+        //validate phone number
+        if (id === "phone_number" && value.length > 10 && Number(value)) {
+            return
+        }
+        setNewUser((prev) => ({ ...prev, [id]: value }))
+    }
+    const handleRegisterButton = async () => {
+        try {
+            await register(newUser)
+            setTimeout(() => {
+                navigate("/auth/login")
+            })
+        } catch (error) {
+            alert("Register failed")
+        }
+    }
     return (
         <Container
             sx={{
@@ -32,9 +57,51 @@ function RegisterPage() {
                 <FormControl
                     sx={{ display: "flex", flexDirection: "column", gap: 1 }}
                 >
-                    <TextField type="text" label="Username" />
-                    <TextField type="password" label="Password" />
-                    <Button variant="contained">Login</Button>
+                    <TextField
+                        type="text"
+                        id="name"
+                        label="First name"
+                        value={newUser.name}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        type="text"
+                        id="surname"
+                        label="Last name"
+                        value={newUser.surname}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        type="email"
+                        id="email"
+                        label="email"
+                        value={newUser.email}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        type="number"
+                        id="phone_number"
+                        label="Phone number"
+                        value={newUser.phone_number}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        type="text"
+                        id="username"
+                        label="Username"
+                        value={newUser.username}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        type="password"
+                        id="password"
+                        label="Password"
+                        value={newUser.password}
+                        onChange={handleChange}
+                    />
+                    <Button variant="contained" onClick={handleRegisterButton}>
+                        Register
+                    </Button>
                 </FormControl>
 
                 <Typography sx={{ fontSize: 14, textAlign: "center" }}>

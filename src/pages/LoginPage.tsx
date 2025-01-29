@@ -17,7 +17,10 @@ function LoginPage() {
         username: "",
         password: "",
     })
-    const [alert, setAlert] = useState(false)
+    const [alertTag, setAlertTag] = useState<{
+        isOpen: boolean
+        message: string
+    }>({ isOpen: false, message: "" })
 
     const { login } = useAuth()
 
@@ -27,15 +30,15 @@ function LoginPage() {
     }
 
     const handleLogin = async () => {
-        const isLogin = await login(loginDetail)
-        console.log(isLogin)
-
-        if (isLogin) {
-            setAlert(true)
+        try {
+            await login(loginDetail)
+            setAlertTag({ isOpen: true, message: "Login success!" })
             setTimeout(() => {
                 navigate("/app")
-            }, 1500)
-        } else {
+            }, 2000)
+        } catch (error) {
+            setAlertTag({ isOpen: true, message: "Login failed" })
+            alert("login failed")
         }
     }
 
@@ -56,7 +59,9 @@ function LoginPage() {
                     gap: 2,
                 }}
             >
-                {alert && <Alert severity="success">Login success!</Alert>}
+                {alertTag.isOpen && (
+                    <Alert severity="success">{alertTag.message}</Alert>
+                )}
                 <Typography variant="h6" sx={{ textAlign: "center" }}>
                     Login NaritPOS
                 </Typography>

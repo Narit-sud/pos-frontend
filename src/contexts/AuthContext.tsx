@@ -6,15 +6,19 @@ import {
     useEffect,
 } from "react"
 import { LoginDetail } from "../interfaces/LoginDetail"
-import { User, UserAuth } from "../interfaces/User"
-import { userService } from "../services/user"
-import { authService } from "../services/auth"
+import { NewUser, User, UserAuth } from "../interfaces/User"
+import {
+    loginService,
+    logoutService,
+    registerService,
+    reloginService,
+} from "../services/auth"
 
 interface AuthContextType {
-    user: User | null
-    setUser: any
-    login: (loginDetail: LoginDetail) => Promise<boolean>
-    logout: () => Promise<boolean>
+    user: UserAuth | null
+    register: (newUser: NewUser) => Promise<void>
+    login: (loginDetail: LoginDetail) => Promise<void>
+    logout: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -22,54 +26,45 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<UserAuth>({} as UserAuth)
 
-    const login = async (loginDetail: LoginDetail) => {
-        const isLogin = (await authService.login(loginDetail)) as {
-            success: boolean
-            message?: string
+    const register = async (newUser: NewUser) => {
+        try {
+            await registerService(newUser)
+        } catch (error) {
+            console.error(error)
         }
-        if (isLogin.success) {
-            return true
-        }
+    }
 
-        return false
-        // const isLogin = (await publicServices.login(loginDetail)) as {
-        //     success: boolean
-        //     message: string
-        //     data: UserAuth
-        // }
-        // console.log(isLogin, "trylogin")
-        //
-        // if (isLogin.success && isLogin.data) {
-        //     setUser(isLogin.data)
-        //     return true
-        // } else {
-        //     return false
-        // }
+    const login = async (loginDetail: LoginDetail) => {
+        try {
+            await loginService(loginDetail)
+            await relogin()
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     const logout = async () => {
-        const isLogout = await userService.logout()
-        if (isLogout) {
-            setUser({} as UserAuth)
-            return true
-        } else {
-            return false
+        try {
+            await logoutService()
+        } catch (error) {
+            console.error(error)
         }
     }
 
     const relogin = async () => {
-        // const isLogin = await userService.relogin()
-        // if (typeof isLogin !== undefined) {
-        //     const userData: UserAuth = isLogin
-        //     setUser(userData)
-        // }
+        try {
+            const reloadUserData = await reloginService()
+            setUser(reloadUserData)
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     useEffect(() => {
         relogin()
     }, [])
     return (
-        <AuthContext.Provider value={{ user, setUser, login, logout }}>
+        <AuthContext.Provider value={{ user, register, login, logout }}>
             {children}
         </AuthContext.Provider>
     )

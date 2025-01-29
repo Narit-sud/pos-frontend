@@ -1,21 +1,58 @@
 import axios from "axios"
-import { LOGIN_URL } from "./apiUrls"
-import { LoginDetail } from "../interfaces/User"
+import { ApiResponse } from "../interfaces/ApiResponse"
+import { LOGIN_URL, LOGOUT_URL, RELOGIN_URL, REGISTER_URL } from "./apiUrls"
+import { LoginDetail, NewUser } from "../interfaces/User"
+import { UserAuth } from "../interfaces/User"
 
-export const authService = {
-    login: async (loginDetail: LoginDetail) => {
-        try {
-            const { data } = await axios.post(LOGIN_URL, loginDetail, {
-                withCredentials: true,
-            })
-            if (typeof data === "object" && data !== null) {
-                console.log(data)
-
-                return data
-            }
-        } catch (error) {
-            console.log(error)
-            return error
+export const loginService = async (loginDetail: LoginDetail): Promise<void> => {
+    try {
+        const { data } = await axios.post(LOGIN_URL, loginDetail, {
+            withCredentials: true,
+        })
+        if (!data) {
+            throw new Error("Login failed")
         }
-    },
+    } catch (error) {
+        throw error
+    }
+}
+
+export const registerService = async (newUser: NewUser): Promise<void> => {
+    try {
+        await axios.post(REGISTER_URL, newUser)
+    } catch (error) {
+        throw error
+    }
+}
+
+export const logoutService = async (): Promise<void> => {
+    try {
+        const { data } = await axios.post<ApiResponse<never>>(
+            LOGOUT_URL,
+            undefined,
+            {
+                withCredentials: true,
+            },
+        )
+        if (data.success) {
+            console.log("logout complete")
+        }
+    } catch (error) {
+        throw error
+    }
+}
+
+export const reloginService = async (): Promise<UserAuth> => {
+    try {
+        const { data } = await axios.get<ApiResponse<UserAuth>>(RELOGIN_URL, {
+            withCredentials: true,
+        })
+        if (data.success) {
+            return data.data as UserAuth
+        } else {
+            throw new Error("No user data returned")
+        }
+    } catch (error) {
+        throw error
+    }
 }
