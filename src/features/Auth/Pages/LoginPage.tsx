@@ -9,7 +9,7 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import { useAuth } from "../features/Auth/useAuth";
+import { useAuth } from "../useAuth";
 
 function LoginPage() {
     const navigate = useNavigate();

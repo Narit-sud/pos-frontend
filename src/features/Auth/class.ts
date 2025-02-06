@@ -1,4 +1,4 @@
-export class ValidateRegister {
+export class ValidateRegisterClass {
     valid: boolean;
     reason: string;
     constructor(valid: boolean, reason: string) {

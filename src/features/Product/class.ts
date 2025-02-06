@@ -6,13 +6,13 @@ export class ProductVariant {
     cost: number;
     price: number;
     detail: string;
-    productMain: string;
+    mainProduct: string;
     constructor(
         name: string,
         price: number,
         cost: number,
         detail: string,
-        productMainUUID: string,
+        mainProductUUID: string,
     ) {
         this.index = 0;
         this.uuid = uuid();
@@ -20,7 +20,7 @@ export class ProductVariant {
         this.price = price;
         this.cost = cost;
         this.detail = detail;
-        this.productMain = productMainUUID;
+        this.mainProduct = mainProductUUID;
     }
 }
 

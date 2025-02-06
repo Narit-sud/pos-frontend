@@ -6,22 +6,12 @@ import {
     TableRow,
 } from "@mui/material";
 import type { ProductMain, ProductVariant } from "../types";
-import { useState } from "react";
 
 type Props = {
     productMain: ProductMain[];
+    selectProduct: (main: ProductMain) => void;
 };
-export default function ProductTable({ productMain }: Props) {
-    const [productInModal, setProductInModal] = useState<ProductMain>();
-    const [productModalOpen, setProductModalOpen] = useState<boolean>(false);
-
-    function handleRowClick(product: ProductMain) {
-        setProductInModal(product);
-        console.log(product);
-
-        setProductModalOpen(true);
-    }
-
+export default function ProductTable({ productMain, selectProduct }: Props) {
     return (
         <>
             <Table>
@@ -38,7 +28,7 @@ export default function ProductTable({ productMain }: Props) {
                         return (
                             <TableRow
                                 key={prod.uuid}
-                                onClick={() => handleRowClick(prod)}
+                                onClick={() => selectProduct(prod)}
                                 sx={{ ":hover": { bgcolor: "lightgray" } }}
                             >
                                 <TableCell>{prod.name}</TableCell>

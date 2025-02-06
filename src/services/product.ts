@@ -1,26 +1,26 @@
-import axios from "axios"
-import { PRODUCT_URL } from "./apiUrls"
-import { Product } from "../interfaces/Product"
-import { ApiResponse } from "../interfaces/ApiResponse"
+import axios from "axios";
+import { PRODUCT_URL } from "../_utils/apiUrls";
+import { Product } from "../_interfaces/Product";
+import { ApiResponse } from "../_interfaces/ApiResponse";
 
 export const getAllProductService = async (): Promise<Product[]> => {
     try {
         const { data } = await axios.get<ApiResponse<Product[]>>(PRODUCT_URL, {
             withCredentials: true,
-        })
+        });
 
         if (!data.success) {
-            throw new Error(data.message)
+            throw new Error(data.message);
         }
 
-        return data.data
+        return data.data;
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            throw error
+            throw error;
         }
-        throw error as Error
+        throw error as Error;
     }
-}
+};
 
 export const getProductByIdService = async (
     id: string | number,
@@ -28,18 +28,18 @@ export const getProductByIdService = async (
     try {
         const { data } = await axios.get(`${PRODUCT_URL}/${id}`, {
             withCredentials: true,
-        })
+        });
         if (!data.success) {
-            throw new Error(data.message)
+            throw new Error(data.message);
         }
-        return data.data
+        return data.data;
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            throw error.response
+            throw error.response;
         }
-        throw error
+        throw error;
     }
-}
+};
 
 export const createProductService = async (
     product: Product,
@@ -51,24 +51,24 @@ export const createProductService = async (
             {
                 withCredentials: true,
             },
-        )
+        );
 
         if (!data.success) {
-            throw new Error(data.message)
+            throw new Error(data.message);
         }
 
-        const newProductId = data.message.split(":")[1]
+        const newProductId = data.message.split(":")[1];
         if (!newProductId) {
-            throw new Error("No product id returned, create product failed")
+            throw new Error("No product id returned, create product failed");
         }
-        return Number(newProductId)
+        return Number(newProductId);
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            throw error.response
+            throw error.response;
         }
-        throw error
+        throw error;
     }
-}
+};
 
 export const updateProductService = async (product: Product): Promise<void> => {
     try {
@@ -78,36 +78,36 @@ export const updateProductService = async (product: Product): Promise<void> => {
             {
                 withCredentials: true,
             },
-        )
+        );
         if (!data.success) {
-            throw new Error(data.message)
+            throw new Error(data.message);
         }
     } catch (error) {
         if (axios.isAxiosError(error)) {
             if (error.status === 404) {
-                throw new Error("this product doesn't existed")
+                throw new Error("this product doesn't existed");
             }
 
-            throw error.response
+            throw error.response;
         }
-        throw error as Error
+        throw error as Error;
     }
-}
+};
 
 export const deleteProductService = async (id: number): Promise<void> => {
     try {
         await axios.delete<ApiResponse<never>>(`${PRODUCT_URL}/${id}`, {
             withCredentials: true,
-        })
+        });
     } catch (error) {
         if (axios.isAxiosError(error)) {
             if (error.status === 404) {
                 throw new Error(
                     "This product doesn't existed or already deleted",
-                )
+                );
             }
-            throw error
+            throw error;
         }
-        throw error as Error
+        throw error as Error;
     }
-}
+};

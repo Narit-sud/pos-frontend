@@ -3,27 +3,33 @@ import {
     Button,
     FormControl,
     InputLabel,
-    Menu,
     MenuItem,
     Select,
     SelectChangeEvent,
     TextField,
-    Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useCategory } from "../../Category/index.ts";
-import { v4 as uuid } from "uuid";
 import { VariantForm } from "./VariantForm.tsx";
 import { ProductMain, ProductVariant } from "../class.ts";
+import { SingleForm } from "./SingleForm.tsx";
+import { useProduct } from "../useProduct.tsx";
 
-export function ProductForm() {
+type Props = {
+    productMain: ProductMain | undefined;
+};
+export function ProductForm({ productMain }: Props) {
+    const { productVariants, createMain, createVariants, deleteMain } =
+        useProduct();
+    const { category } = useCategory();
+
     const [main, setMain] = useState<ProductMain>(
-        new ProductMain("", undefined, "", "single", undefined, undefined),
+        productMain ||
+            new ProductMain("", undefined, "", "single", undefined, undefined),
     );
-    const [variant, setVariant] = useState<ProductVariant[]>([
+    const [variants, setVariants] = useState<ProductVariant[]>([
         new ProductVariant("", 0, 0, "", main.uuid),
     ]);
-    const { category } = useCategory();
 
     function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
         const { id, name, value } = e.target;
@@ -31,7 +37,7 @@ export function ProductForm() {
             setMain((prev) => ({ ...prev, [id]: value }));
         } else {
             if (id === "price" || id === "cost") {
-                setVariant((prev) =>
+                setVariants((prev) =>
                     prev.map((item) =>
                         item.uuid === name
                             ? { ...item, [id]: Number(value) }
@@ -39,7 +45,7 @@ export function ProductForm() {
                     ),
                 );
             } else {
-                setVariant((prev) =>
+                setVariants((prev) =>
                     prev.map((item) =>
                         item.uuid === name ? { ...item, [id]: value } : item,
                     ),
@@ -47,24 +53,70 @@ export function ProductForm() {
             }
         }
     }
+
     function handleSelectChange(e: SelectChangeEvent) {
         setMain((prev) => ({ ...prev, category: e.target.value }));
     }
 
+    function changeMainType(type: string) {
+        setMain((prev) => ({ ...prev, type }));
+    }
+
+    async function handleDelete() {
+        try {
+            if (productMain) {
+                await deleteMain(productMain.uuid);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    function initialVariant() {
+        if (productMain) {
+            const filtered = productVariants.filter(
+                (item) => item.mainProduct === productMain.uuid,
+            );
+            setVariants(filtered);
+            if (filtered.length > 1) {
+                setMain((prev) => ({ ...prev, type: "multi" }));
+            }
+        } else {
+            setVariants([new ProductVariant("", 0, 0, "", main.uuid)]);
+        }
+    }
+
     function addVariant() {
         if (main.type === "single") {
-            setMain((prev) => ({ ...prev, type: "multi" }));
+            changeMainType("multi");
         }
         const newVariant = new ProductVariant("", 0, 0, "", main.uuid);
-        setVariant((prev) => [...prev, newVariant]);
+        setVariants((prev) => [...prev, newVariant]);
     }
 
-    function handleCreate() {
+    function removeVariant(variantUUID: string) {
+        if (main.type === "multi" && variants.length === 2) {
+            changeMainType("single");
+        }
+        setVariants((prev) =>
+            prev.filter((variant) => variant.uuid !== variantUUID),
+        );
+    }
+
+    async function handleCreate() {
+        try {
+            await createMain(main, variants);
+        } catch (error) {
+            console.error(error);
+        }
         console.log("created?");
         console.log(main);
-        console.log(variant);
+        console.log(variants);
     }
 
+    useEffect(() => {
+        initialVariant();
+    }, []);
     return (
         <Box
             sx={{
@@ -75,11 +127,6 @@ export function ProductForm() {
                 p: 2,
             }}
         >
-            <Typography>{JSON.stringify(main)}</Typography>
-            <div>variants</div>
-            {variant.map((prod) => {
-                return <div key={prod.uuid}>{JSON.stringify(prod)}</div>;
-            })}
             <FormControl
                 sx={{
                     px: 5,
@@ -122,6 +169,18 @@ export function ProductForm() {
                     value={main.detail}
                     onChange={handleInputChange}
                 />
+                {main.type === "single" ? (
+                    <SingleForm
+                        variant={variants[0]}
+                        handleChange={handleInputChange}
+                    />
+                ) : (
+                    <VariantForm
+                        variants={variants}
+                        handleChange={handleInputChange}
+                        removeVariant={removeVariant}
+                    />
+                )}
                 <Button
                     type="button"
                     variant="outlined"
@@ -130,26 +189,22 @@ export function ProductForm() {
                 >
                     Add option
                 </Button>
-                <Typography variant="h6" sx={{ alignSelf: "center", mb: 2 }}>
-                    Options
-                </Typography>
-                {/* TODO: product variant show differently according to main.type === 'multi'? show rows of variants :'single' show one column of variant */}
-                {variant.map((prod) => {
-                    return (
-                        <VariantForm
-                            key={prod.uuid}
-                            productVariant={prod}
-                            handleChange={handleInputChange}
-                        />
-                    );
-                })}
                 <Button
                     type="button"
                     variant="contained"
                     onClick={handleCreate}
                 >
-                    Create new product
+                    {productMain ? "Update product" : "Create new product"}
                 </Button>
+                {productMain && (
+                    <Button
+                        type="button"
+                        variant="contained"
+                        onClick={handleDelete}
+                    >
+                        Delete Product
+                    </Button>
+                )}
             </FormControl>
         </Box>
     );

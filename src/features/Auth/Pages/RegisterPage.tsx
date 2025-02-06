@@ -8,9 +8,9 @@ import {
     Typography,
 } from "@mui/material";
 import { useState } from "react";
-import { emptyNewUser, NewUser } from "../features/Auth/types";
+import { emptyNewUser, NewUser } from "../types";
 import { useNavigate } from "react-router";
-import { useAuth } from "../features/Auth/useAuth";
+import { useAuth } from "../useAuth";
 
 function RegisterPage() {
     const navigate = useNavigate();

@@ -4,15 +4,15 @@ import {
     Typography,
     Grid2 as Grid,
     Button,
-} from "@mui/material"
-import { useState } from "react"
-import { Outlet } from "react-router"
-import { useAuth } from "../contexts/AuthContext"
-import UserModal from "../components/UserModal"
+} from "@mui/material";
+import { useState } from "react";
+import { Outlet } from "react-router";
+import { useAuth } from "../_contexts/AuthContext";
+import UserModal from "../_components/UserModal";
 
 function AppLayout() {
-    const { user } = useAuth()
-    const [userModalOpen, setUserModalOpen] = useState<boolean>(false)
+    const { user } = useAuth();
+    const [userModalOpen, setUserModalOpen] = useState<boolean>(false);
     return (
         <div>
             <header className="bg-gray-200 p-1">
@@ -38,7 +38,7 @@ function AppLayout() {
                         <Button
                             variant="outlined"
                             onClick={() => {
-                                setUserModalOpen(true)
+                                setUserModalOpen(true);
                             }}
                         >{`Hi! ${user?.name || ""}`}</Button>
                     </Grid>
@@ -53,12 +53,12 @@ function AppLayout() {
                 <UserModal
                     open={userModalOpen}
                     handleClose={() => {
-                        setUserModalOpen(false)
+                        setUserModalOpen(false);
                     }}
                 />
             )}
         </div>
-    )
+    );
 }
 
-export default AppLayout
+export default AppLayout;

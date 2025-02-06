@@ -20,3 +20,10 @@ export const emptyProductVariant: ProductVariant = {
     price: 0,
     detail: "",
 };
+
+export function validateVariantList(varaintList: ProductVariant[]): boolean {
+    // if(){
+    //         return true
+    //     }
+    //     return false
+}

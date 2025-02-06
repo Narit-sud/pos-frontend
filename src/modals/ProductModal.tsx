@@ -1,4 +1,4 @@
-import { Product } from "../interfaces/Product"
+import { Product } from "../_interfaces/Product";
 import {
     Button,
     Box,
@@ -9,15 +9,15 @@ import {
     TableRow,
     TableCell,
     Stack,
-} from "@mui/material"
-import { useNavigate } from "react-router"
+} from "@mui/material";
+import { useNavigate } from "react-router";
 
 type Props = {
-    product: Product
-    isOpen: boolean
-    handleOpen(): void
-    handleClose(): void
-}
+    product: Product;
+    isOpen: boolean;
+    handleOpen(): void;
+    handleClose(): void;
+};
 
 export default function ProductModal({
     product,
@@ -25,7 +25,7 @@ export default function ProductModal({
     handleOpen,
     handleClose,
 }: Props) {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     return (
         <div>
@@ -94,7 +94,7 @@ export default function ProductModal({
                         <Button
                             variant="outlined"
                             onClick={() => {
-                                navigate(`edit/${product.id}`)
+                                navigate(`edit/${product.id}`);
                             }}
                         >
                             Edit
@@ -106,5 +106,5 @@ export default function ProductModal({
                 </Box>
             </Modal>
         </div>
-    )
+    );
 }
