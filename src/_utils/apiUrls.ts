@@ -1,4 +1,4 @@
-const MAIN_URL = "http://localhost:3333";
+export const MAIN_URL = "http://localhost:3333";
 
 // auth
 const AUTH_URL = `${MAIN_URL}/auth`;

@@ -1,118 +1,141 @@
 import {
-    createContext,
-    useState,
-    useEffect,
-    useContext,
     ReactNode,
+    createContext,
+    useContext,
+    useEffect,
+    useState,
 } from "react";
-import { ProductMain, ProductVariant } from "./class";
 import {
-    createFullService,
-    createVariantsService,
-    deleteMainService,
-    getMainsService,
-    getVariantsService,
-} from "./services";
-import { FullProduct } from "./types";
-
-type ProductContextType = {
-    productMains: ProductMain[];
-    productVariants: ProductVariant[];
-    createMain: (
-        newProductMain: ProductMain,
-        newProductVariants: ProductVariant[],
-    ) => Promise<void>;
-    createVariants: (newProductVariants: ProductVariant[]) => Promise<void>;
-    deleteMain: (uuid: string) => Promise<void>;
-};
+    MainProductClass,
+    VariantProductClass,
+    FullProductClass,
+} from "./class";
+import { getMains, updateMain } from "./services/mainProduct";
+import {
+    createVariants,
+    deleteVariants,
+    getVariants,
+    updateVaraints,
+} from "./services/variantProduct";
+import { createFull, deleteFull } from "./services/fullProduct";
 
 type Props = {
     children: ReactNode;
 };
+
+type ProductContextType = {
+    mainProducts: MainProductClass[];
+    variantProducts: VariantProductClass[];
+    createNewProduct: (fullProduct: FullProductClass) => Promise<void>;
+    deleteProduct: (mainProductUUID: string) => Promise<void>;
+    updateFullProduct: (fullProduct: FullProductClass) => Promise<void>;
+};
+
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
 export function ProductProvider({ children }: Props) {
-    const [productMains, setProductMains] = useState<ProductMain[]>([]);
-    const [productVariants, setProductVariants] = useState<ProductVariant[]>(
-        [],
-    );
+    const [mainProducts, setMainProducts] = useState<MainProductClass[]>([]);
+    const [variantProducts, setVariantProducts] = useState<
+        VariantProductClass[]
+    >([]);
 
-    async function loadMains() {
-        try {
-            const mains = await getMainsService();
-            setProductMains(mains);
-        } catch (error) {
-            console.error(error);
-        }
-    }
+    const initialize = async () => {
+        const main = await getMains();
+        setMainProducts(main);
+        const variant = await getVariants();
+        setVariantProducts(variant);
+    };
 
-    async function loadVariants() {
-        try {
-            const variants = await getVariantsService();
-            setProductVariants(variants);
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    async function createMain(
-        newProductMain: ProductMain,
-        newProductVariants: ProductVariant[],
-    ) {
-        const fullProduct: FullProduct = {
-            ...newProductMain,
-            variants: newProductVariants,
+    const createNewProduct = async (
+        fullProduct: FullProductClass,
+    ): Promise<void> => {
+        // filter variants with status !== 'create' out
+        const cleanFullProduct = {
+            ...fullProduct,
+            variants: fullProduct.variants.filter(
+                (prod) => prod.status === "create",
+            ),
         };
         try {
-            await createFullService(fullProduct);
-            setProductMains((prev) => [...prev, newProductMain]);
+            console.log("useProduct/createNewProduct");
+
+            // create request
+            await createFull(cleanFullProduct);
+            // update main list
+            setMainProducts((prev) => [
+                ...prev,
+                new MainProductClass(cleanFullProduct),
+            ]);
+            // update variant list, from status 'create'=>'active' when created
+            const newVariants = cleanFullProduct.variants.map(
+                (prod) =>
+                    new VariantProductClass({ ...prod, status: "active" }),
+            );
+            setVariantProducts((prev) => [...prev, ...newVariants]);
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
-    async function createVariants(newProductVariants: ProductVariant[]) {
+    const deleteProduct = async (mainProductUUID: string): Promise<void> => {
         try {
-            await createVariantsService(newProductVariants);
-            setProductVariants((prev) => [...prev, ...newProductVariants]);
+            await deleteFull(mainProductUUID);
+            setMainProducts((prev) =>
+                prev.filter((prod) => prod.uuid !== mainProductUUID),
+            );
+            setVariantProducts((prev) =>
+                prev.filter((prod) => prod.mainProduct !== mainProductUUID),
+            );
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
+    const updateFullProduct = async (
+        fullProduct: FullProductClass,
+    ): Promise<void> => {
+        // filter what to update
+        const updateVariantsList = fullProduct.variants.filter(
+            (prod) => prod.status === "update",
+        );
+        console.log(updateVariantsList);
 
-    async function deleteMain(uuid: string) {
-        const confirmDelete = confirm("confirm to delete this product?");
+        // filter what to delete
+        const deleteVariantsList = fullProduct.variants.filter(
+            (prod) => prod.status === "delete",
+        );
+        console.log(deleteVariantsList);
+        // filter what to create
+        const createVariantsList = fullProduct.variants.filter(
+            (prod) => prod.status === "create",
+        );
+        console.log(createVariantsList);
         try {
-            if (confirmDelete) {
-                await deleteMainService(uuid);
-                const updatedMain = productMains.filter(
-                    (main) => main.uuid !== uuid,
-                );
-                console.log(productMains);
-                console.log(updatedMain);
-
-                setProductMains(updatedMain);
-            } else {
-                return;
+            // update main
+            if (fullProduct.status === "update") {
+                await updateMain(fullProduct);
             }
+
+            // handle variants as it should
+            if (createVariantsList) await createVariants(createVariantsList);
+            if (updateVariantsList) await updateVaraints(updateVariantsList);
+            if (deleteVariantsList) await deleteVariants(deleteVariantsList);
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     useEffect(() => {
-        loadMains();
-        loadVariants();
+        initialize();
     }, []);
     return (
         <ProductContext.Provider
             value={{
-                productMains,
-                productVariants,
-                createMain,
-                createVariants,
-                deleteMain,
+                mainProducts,
+                variantProducts,
+                createNewProduct,
+                deleteProduct,
+                updateFullProduct,
             }}
         >
             {children}

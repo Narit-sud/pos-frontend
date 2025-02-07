@@ -1,4 +1,2 @@
-export * from "./types";
-export * from "./useProduct";
-export * from "./Pages/ProductPage";
-export * from "./useProduct";
+export * from "./pages/ProductPage.tsx";
+export * from "./useProduct.tsx";

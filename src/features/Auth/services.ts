@@ -16,6 +16,7 @@ export const loginService = async (loginDetail: LoginDetail): Promise<void> => {
         if (!data) {
             throw new Error("Login failed");
         }
+        window.location.href = "/product";
     } catch (error) {
         throw error;
     }

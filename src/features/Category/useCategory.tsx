@@ -6,10 +6,10 @@ import {
     ReactNode,
 } from "react";
 import type { Category } from "./types";
-import { getCategoryService } from "./services";
+import { getCategories } from "./services";
 
 type CategoryContextType = {
-    category: Category[];
+    categories: Category[];
 };
 
 type Props = {
@@ -20,11 +20,11 @@ const CategoryContext = createContext<CategoryContextType | undefined>(
 );
 
 export function CategoryProvider({ children }: Props) {
-    const [category, setCategory] = useState<Category[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
     async function loadCategories() {
         try {
-            const categories = await getCategoryService();
-            setCategory(categories);
+            const categories = await getCategories();
+            setCategories(categories);
         } catch (error) {
             console.error(error);
         }
@@ -34,7 +34,7 @@ export function CategoryProvider({ children }: Props) {
         loadCategories();
     }, []);
     return (
-        <CategoryContext.Provider value={{ category }}>
+        <CategoryContext.Provider value={{ categories }}>
             {children}
         </CategoryContext.Provider>
     );

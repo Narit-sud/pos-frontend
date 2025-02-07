@@ -1,45 +1,93 @@
 import {
+    Button,
     Table,
     TableBody,
     TableCell,
     TableHead,
     TableRow,
 } from "@mui/material";
-import type { ProductMain, ProductVariant } from "../types";
+import { useProduct } from "../useProduct.tsx";
+import { useState } from "react";
+import { CustomModal } from "../../../_components/CustomModal";
+import { MainProductForm } from "./MainProductForm";
+import { useCategory } from "../../Category/useCategory.tsx";
+import {
+    MainProductClass,
+    VariantProductClass,
+    FullProductClass,
+} from "../class";
+import { useNavigate } from "react-router";
 
-type Props = {
-    productMain: ProductMain[];
-    selectProduct: (main: ProductMain) => void;
+const headerStyle = {
+    textAlign: "center",
+    fontWeight: "bold",
 };
-export default function ProductTable({ productMain, selectProduct }: Props) {
+
+const bodyStyle = { ":hover": { bgcolor: "lightgray" } };
+
+export default function ProductTable() {
+    const navigate = useNavigate();
+    const { mainProducts, variantProducts } = useProduct();
+    const { categories } = useCategory();
+    const [open, setOpen] = useState<boolean>(false);
+    const [productInModal, setProductInModal] = useState<
+        FullProductClass | undefined
+    >(undefined);
+    const onOpen = () => setOpen(true);
+    const onClose = () => {
+        setOpen(false);
+        setProductInModal(undefined);
+    };
+
+    const handleProductClick = (mainProductUUID: string) => {
+        navigate(`${mainProductUUID}`);
+        // const main = mainProducts.find(
+        //     (prod) => prod.uuid === mainProductUUID,
+        // ) as MainProductClass;
+        // const variants = variantProducts.filter(
+        //     (prod) => prod.mainProduct === mainProductUUID,
+        // ) as VariantProductClass[];
+        // setProductInModal({ ...main, variants });
+        // onOpen();
+    };
+
+    const handleCreateButton = () => {
+        onOpen();
+        setProductInModal(undefined);
+    };
     return (
         <>
             <Table>
                 <TableHead>
-                    <TableRow sx={{ textAlign: "center" }}>
-                        <TableCell>Name</TableCell>
-                        <TableCell>Category</TableCell>
-                        <TableCell>Detail</TableCell>
-                        <TableCell>Variants</TableCell>
+                    <TableRow>
+                        <TableCell sx={headerStyle}>Name</TableCell>
+                        <TableCell sx={headerStyle}>Category</TableCell>
+                        <TableCell sx={headerStyle}>Detail</TableCell>
+                        <TableCell sx={headerStyle}>Variant(s)</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {productMain?.map((prod) => {
+                    {mainProducts?.map((main) => {
                         return (
                             <TableRow
-                                key={prod.uuid}
-                                onClick={() => selectProduct(prod)}
-                                sx={{ ":hover": { bgcolor: "lightgray" } }}
+                                key={main.uuid}
+                                sx={bodyStyle}
+                                onClick={() => handleProductClick(main.uuid)}
                             >
-                                <TableCell>{prod.name}</TableCell>
-                                <TableCell>{prod.category}</TableCell>
-                                <TableCell>{prod.detail}</TableCell>
-                                <TableCell>{prod.variantCount}</TableCell>
+                                <TableCell>{main.name}</TableCell>
+                                <TableCell>
+                                    {categories?.find(
+                                        (cat) => cat.uuid === main.category,
+                                    )?.name || "Category not found"}
+                                </TableCell>
+                                <TableCell>{main.detail}</TableCell>
+                                <TableCell>{main.variantCount}</TableCell>
                             </TableRow>
                         );
                     })}
                 </TableBody>
             </Table>
+            <Button onClick={() => navigate("new")}>Create new product</Button>
         </>
     );
 }

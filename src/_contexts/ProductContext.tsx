@@ -11,7 +11,7 @@ import {
     deleteProductService,
     getAllProductService,
     updateProductService,
-} from "../services/product";
+} from "../_services/product";
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 

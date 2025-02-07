@@ -5,14 +5,13 @@ import {
     ReactNode,
     useEffect,
 } from "react";
-import { LoginDetail } from "../interfaces/LoginDetail";
-import { NewUser, User, UserAuth } from "../interfaces/User";
+import { LoginDetail, NewUser, User, UserAuth } from "./types";
 import {
     loginService,
     logoutService,
     registerService,
     reloginService,
-} from "../services/auth";
+} from "./services.ts";
 
 interface AuthContextType {
     user: UserAuth | null;
@@ -60,9 +59,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    useEffect(() => {
-        relogin();
-    }, []);
+    // useEffect(() => {
+    //     relogin();
+    // }, []);
     return (
         <AuthContext.Provider value={{ user, register, login, logout }}>
             {children}
