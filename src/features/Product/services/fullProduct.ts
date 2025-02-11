@@ -1,10 +1,6 @@
 import axios, { isAxiosError } from "axios";
-import { MAIN_URL } from "../../../_utils/apiUrls";
-import {
-    FullProductClass,
-    VariantProductClass,
-    MainProductClass,
-} from "../class";
+import { MAIN_URL } from "../../../utils/apiUrls";
+import { FullProductClass } from "../class";
 import { ApiResponse } from "../../../_interfaces/ApiResponse";
 import { checkAuthError } from "../utils";
 

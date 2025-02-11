@@ -5,7 +5,7 @@ import {
     LOGOUT_URL,
     RELOGIN_URL,
     REGISTER_URL,
-} from "../../_utils/apiUrls.ts";
+} from "../../utils/apiUrls.ts";
 import { LoginDetail, NewUser, UserAuth } from "./types";
 
 export const loginService = async (loginDetail: LoginDetail): Promise<void> => {

@@ -10,6 +10,8 @@ import RegisterPage from "./features/Auth/Pages/RegisterPage.tsx";
 import CategoryPage from "./features/Category/pages/CategoryPage.tsx";
 import { AuthProvider } from "./features/Auth/useAuth.tsx";
 import ProductForm from "./features/Product/pages/ProductForm.tsx";
+import SalePage from "./features/Sale/pages/SalePage.tsx";
+import CustomerPage from "./features/Customer/pages/CustomerPage.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -35,6 +37,28 @@ createRoot(document.getElementById("root")!).render(
                                 </Providers>
                             }
                         />
+                    </Route>
+
+                    <Route path="/customer">
+                        <Route
+                            index
+                            element={
+                                <Providers>
+                                    <CustomerPage />
+                                </Providers>
+                            }
+                        ></Route>
+                    </Route>
+
+                    <Route path="/sale">
+                        <Route
+                            index
+                            element={
+                                <Providers>
+                                    <SalePage />
+                                </Providers>
+                            }
+                        ></Route>
                     </Route>
 
                     <Route

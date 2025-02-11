@@ -13,9 +13,9 @@ import {
 import { getMains, updateMain } from "./services/mainProduct";
 import {
     createVariants,
-    deleteVariants,
     getVariants,
     updateVaraints,
+    deleteVariants,
 } from "./services/variantProduct";
 import { createFull, deleteFull } from "./services/fullProduct";
 
@@ -113,13 +113,52 @@ export function ProductProvider({ children }: Props) {
         try {
             // update main
             if (fullProduct.status === "update") {
+                // send update request
                 await updateMain(fullProduct);
+                // update main list
+                setMainProducts((prev) =>
+                    prev.map((item) =>
+                        item.uuid === fullProduct.uuid
+                            ? ({
+                                  ...fullProduct,
+                                  status: "active",
+                              } as MainProductClass)
+                            : item,
+                    ),
+                );
             }
 
             // handle variants as it should
-            if (createVariantsList) await createVariants(createVariantsList);
-            if (updateVariantsList) await updateVaraints(updateVariantsList);
-            if (deleteVariantsList) await deleteVariants(deleteVariantsList);
+            if (createVariantsList.length > 0) {
+                // send create variants request
+                await createVariants(createVariantsList);
+                // add new variants to the list
+                setVariantProducts((prev) => [...prev, ...createVariantsList]);
+            }
+            if (updateVariantsList.length > 0) {
+                // send update variants request
+                await updateVaraints(updateVariantsList);
+                // add update variants list
+                setVariantProducts((prev) =>
+                    prev.map((prod) => {
+                        const update = updateVariantsList.find(
+                            (item) => item.uuid === prod.uuid,
+                        );
+                        return update ? update : prod;
+                    }),
+                );
+            }
+            if (deleteVariantsList.length > 0) {
+                // send delete variants request
+                await deleteVariants(deleteVariantsList);
+                // remove delete variants from the list
+                setVariantProducts((prev) => {
+                    const deleteUUIDs = new Set(
+                        deleteVariantsList.map((del) => del.uuid),
+                    );
+                    return prev.filter((item) => !deleteUUIDs.has(item.uuid));
+                });
+            }
         } catch (error) {
             console.error(error);
         }

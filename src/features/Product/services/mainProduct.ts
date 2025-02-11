@@ -1,18 +1,13 @@
 import axios, { isAxiosError } from "axios";
-import { MAIN_URL } from "../../../_utils/apiUrls";
-import {
-    FullProductClass,
-    VariantProductClass,
-    MainProductClass,
-} from "../class";
+import { MAIN_PRODUCT_URL } from "../../../utils/apiUrls";
+import { MainProductClass } from "../class";
 import { ApiResponse } from "../../../_interfaces/ApiResponse";
 import { checkAuthError } from "../utils";
 
 export async function getMains(): Promise<MainProductClass[]> {
     try {
-        console.log("get mains service");
         const { data } = await axios.get<ApiResponse<MainProductClass[]>>(
-            `${MAIN_URL}/product/main`,
+            MAIN_PRODUCT_URL,
             {
                 withCredentials: true,
             },
@@ -30,10 +25,8 @@ export async function getMains(): Promise<MainProductClass[]> {
 
 export async function updateMain(updatedMain: MainProductClass): Promise<void> {
     try {
-        console.log("update main service");
-
         const { data } = await axios.put<ApiResponse>(
-            `${MAIN_URL}/product/main/${updatedMain.uuid}`,
+            `${MAIN_PRODUCT_URL}/${updatedMain.uuid}`,
             updatedMain,
             { withCredentials: true },
         );

@@ -7,8 +7,16 @@ export const REGISTER_URL = `${AUTH_URL}/register`;
 export const LOGIN_URL = `${AUTH_URL}/login`;
 export const LOGOUT_URL = `${AUTH_URL}/logout`;
 export const RELOGIN_URL = `${AUTH_URL}/relogin`;
+
 // product
 export const PRODUCT_URL = `${MAIN_URL}/product`;
+export const MAIN_PRODUCT_URL = `${PRODUCT_URL}/main`;
+export const VARIANT_PRODUCT_URL = `${PRODUCT_URL}/variant`;
+
+// customer
+export const CUSTOMER_URL = `${MAIN_URL}/customer`;
+
+// category
 export const CATEGORY_URL = `${MAIN_URL}/category`;
 // user
 export const USER_URL = `${MAIN_URL}/user`;

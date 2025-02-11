@@ -182,7 +182,10 @@ export function MainProductForm({ existedProductUUID }: Props) {
                     ? { ...prod, status: "create" }
                     : prod.status === "delete" && prod.uuid === variantUUID
                       ? { ...prod, status: "update" }
-                      : prod,
+                      : prod.status === "don't create" &&
+                          prod.uuid === variantUUID
+                        ? { ...prod, status: "create" }
+                        : prod,
             ),
         );
     };

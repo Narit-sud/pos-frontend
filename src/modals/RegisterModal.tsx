@@ -1,13 +1,13 @@
-import { useState } from "react"
-import { useNavigate } from "react-router"
-import { Modal, Box, Button, FormControl, TextField } from "@mui/material"
-import { Close as CloseIcon } from "@mui/icons-material"
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import { Modal, Box, Button, FormControl, TextField } from "@mui/material";
+import { Close as CloseIcon } from "@mui/icons-material";
 
 function RegisterModal() {
-    const navigate = useNavigate()
-    const [open, setOpen] = useState(false)
-    const handleOpen = () => setOpen(true)
-    const handleClose = () => setOpen(false)
+    const navigate = useNavigate();
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
     const [register, setRegister] = useState({
         name: "",
         surname: "",
@@ -15,20 +15,18 @@ function RegisterModal() {
         email: "",
         username: "",
         password: "",
-    })
+    });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { id, value } = e.target
+        const { id, value } = e.target;
         if (id === "phone_number" && value.length > 10) {
-            return
+            return;
         }
 
-        setRegister((prev) => ({ ...prev, [id]: value }))
-    }
+        setRegister((prev) => ({ ...prev, [id]: value }));
+    };
 
-    const handleSubmit = () => {
-        console.log("submit", register)
-    }
+    const handleSubmit = () => {};
 
     return (
         <>
@@ -148,7 +146,7 @@ function RegisterModal() {
                 </Box>
             </Modal>
         </>
-    )
+    );
 }
 
-export default RegisterModal
+export default RegisterModal;

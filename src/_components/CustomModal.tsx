@@ -5,8 +5,9 @@ type Props = {
     children: ReactNode;
     open: boolean;
     onClose: () => void;
+    width?: number;
 };
-export function CustomModal({ children, open, onClose }: Props) {
+export function CustomModal({ children, open, onClose, width = 1000 }: Props) {
     return (
         <Modal
             open={open}
@@ -20,7 +21,7 @@ export function CustomModal({ children, open, onClose }: Props) {
             <Box
                 sx={{
                     position: "relative", // Changed from absolute
-                    width: 1000,
+                    width: { width },
                     maxHeight: "90vh", // Use viewport height instead of fixed pixels
                     height: "auto",
                     overflowY: "auto",

@@ -1,40 +1,14 @@
 import { v4 as genUUID } from "uuid";
+import { SaleItemClass } from "./SaleItemClass";
 
-// sale item
-export interface SaleItemProps {
-    uuid?: string;
-    qty?: number;
-    total?: number;
-    receiptUUID?: string;
-}
-export class SaleItemClass {
-    uuid: string;
-    qty: number;
-    total: number;
-    receiptUUID: string;
-
-    constructor({
-        uuid = genUUID(),
-        qty = 1,
-        total = 0,
-        receiptUUID = "",
-    }: SaleItemProps = {}) {
-        this.uuid = uuid;
-        this.qty = qty;
-        this.total = total;
-        this.receiptUUID = receiptUUID;
-    }
-}
-
-// sale receipt
-export interface SaleReceiptProps {
+export interface SaleOrderProps {
     uuid?: string;
     createdAt?: string;
     updatedAt?: string;
     customerUUID?: string;
     saleItems?: SaleItemClass[];
 }
-export class SaleReceiptClass {
+export class SaleOrderClass {
     uuid: string;
     customerUUID: string;
     saleItems: SaleItemClass[];
@@ -47,7 +21,7 @@ export class SaleReceiptClass {
         saleItems = [],
         createdAt = "now()",
         updatedAt = "now()",
-    }: SaleReceiptProps = {}) {
+    }: SaleOrderProps = {}) {
         this.uuid = uuid;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
