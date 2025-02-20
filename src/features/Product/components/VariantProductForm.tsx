@@ -1,11 +1,4 @@
-import {
-    Box,
-    Button,
-    FormControl,
-    Grid,
-    Grid2,
-    TextField,
-} from "@mui/material";
+import { Box, Button, FormControl, Grid2, TextField } from "@mui/material";
 import { VariantProductClass } from "../class";
 
 type Props = {
@@ -20,6 +13,12 @@ export function VariantProductForm({
     handleChange,
     handleUndo,
 }: Props) {
+    const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = Math.max(0, Number(e.target.value));
+        e.target.value = value.toString();
+        handleChange(e);
+    };
+
     return (
         <Box sx={{ display: "flex", flexDirection: "column" }}>
             <FormControl
@@ -34,6 +33,7 @@ export function VariantProductForm({
                 }}
             >
                 {variants?.map((prod, index) => {
+                    const isSingleVariant = variants.length === 1;
                     return (
                         <div key={prod.uuid}>
                             <Grid2
@@ -51,57 +51,58 @@ export function VariantProductForm({
                                                   prod.status === "don't create"
                                                 ? "#ff5c5c"
                                                 : "",
+                                    flexDirection: isSingleVariant
+                                        ? "column"
+                                        : "row",
                                 }}
                             >
-                                <Grid2
-                                    size={1}
-                                    sx={{
-                                        placeItems: "center",
-                                        placeContent: "center",
-                                        textAlign: "center",
-                                    }}
-                                >
-                                    {`${index + 1}.`}
-                                </Grid2>
-                                <Grid2 size={3}>
-                                    <TextField
-                                        type="text"
-                                        name="name"
-                                        id={prod.uuid}
-                                        label="Option name"
-                                        value={prod.name}
-                                        onChange={handleChange}
-                                    />
-                                </Grid2>
-                                <Grid2 size={1}>
+                                {!isSingleVariant && (
+                                    <>
+                                        <Grid2
+                                            size={1}
+                                            sx={{ textAlign: "center" }}
+                                        >
+                                            {`${index + 1}.`}
+                                        </Grid2>
+                                        <Grid2 size={3}>
+                                            <TextField
+                                                type="text"
+                                                name="name"
+                                                id={prod.uuid}
+                                                label="Option name"
+                                                value={prod.name}
+                                                onChange={handleChange}
+                                            />
+                                        </Grid2>
+                                    </>
+                                )}
+                                <Grid2 size={isSingleVariant ? 12 : 1}>
                                     <TextField
                                         type="number"
                                         id={prod.uuid}
                                         name="price"
                                         label="Price"
                                         value={prod.price}
-                                        onChange={handleChange}
+                                        onChange={handleNumberChange}
+                                        inputProps={{ min: 0 }}
+                                        fullWidth={isSingleVariant}
                                     />
                                 </Grid2>
-                                <Grid2 size={1}>
+                                <Grid2 size={isSingleVariant ? 12 : 1}>
                                     <TextField
                                         type="number"
                                         id={prod.uuid}
                                         name="cost"
                                         label="Cost"
                                         value={prod.cost}
-                                        onChange={handleChange}
+                                        onChange={handleNumberChange}
+                                        inputProps={{ min: 0 }}
+                                        fullWidth={isSingleVariant}
                                     />
                                 </Grid2>
-                                {variants.length > 1 && (
+                                {!isSingleVariant && (
                                     <>
-                                        <Grid2
-                                            size={3}
-                                            sx={{
-                                                placeItems: "center",
-                                                placeContent: "center",
-                                            }}
-                                        >
+                                        <Grid2 size={3}>
                                             <TextField
                                                 type="text"
                                                 id={prod.uuid}
@@ -111,10 +112,7 @@ export function VariantProductForm({
                                                 onChange={handleChange}
                                             />
                                         </Grid2>
-                                        <Grid2
-                                            size={2}
-                                            sx={{ placeItems: "center" }}
-                                        >
+                                        <Grid2 size={2}>
                                             {(prod.status === "create" ||
                                                 prod.status === "update" ||
                                                 prod.status === "active") && (

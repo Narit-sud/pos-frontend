@@ -5,28 +5,23 @@ import {
     useEffect,
     useState,
 } from "react";
-import {
-    MainProductClass,
-    VariantProductClass,
-    FullProductClass,
-} from "./class";
-import { getMains, updateMain } from "./services/mainProduct";
+import { FullProductClass } from "./class";
+import { updateMain } from "./services/mainProduct";
 import {
     createVariants,
-    getVariants,
     updateVaraints,
     deleteVariants,
 } from "./services/variantProduct";
-import { createFull, deleteFull } from "./services/fullProduct";
+import { getFull, createFull, deleteFull } from "./services/fullProduct";
 
 type Props = {
     children: ReactNode;
 };
 
 type ProductContextType = {
-    mainProducts: MainProductClass[];
-    variantProducts: VariantProductClass[];
-    createNewProduct: (fullProduct: FullProductClass) => Promise<void>;
+    fullProducts: FullProductClass[] | null;
+    initialize: () => Promise<void>;
+    createNewProduct: (product: FullProductClass) => Promise<boolean>;
     deleteProduct: (mainProductUUID: string) => Promise<void>;
     updateFullProduct: (fullProduct: FullProductClass) => Promise<void>;
 };
@@ -34,21 +29,18 @@ type ProductContextType = {
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
 export function ProductProvider({ children }: Props) {
-    const [mainProducts, setMainProducts] = useState<MainProductClass[]>([]);
-    const [variantProducts, setVariantProducts] = useState<
-        VariantProductClass[]
-    >([]);
+    const [fullProducts, setFullProducts] = useState<FullProductClass[] | null>(
+        null,
+    );
 
     const initialize = async () => {
-        const main = await getMains();
-        setMainProducts(main);
-        const variant = await getVariants();
-        setVariantProducts(variant);
+        const product = await getFull();
+        setFullProducts(product);
     };
 
     const createNewProduct = async (
         fullProduct: FullProductClass,
-    ): Promise<void> => {
+    ): Promise<boolean> => {
         // filter variants with status !== 'create' out
         const cleanFullProduct = {
             ...fullProduct,
@@ -61,31 +53,18 @@ export function ProductProvider({ children }: Props) {
 
             // create request
             await createFull(cleanFullProduct);
-            // update main list
-            setMainProducts((prev) => [
-                ...prev,
-                new MainProductClass(cleanFullProduct),
-            ]);
-            // update variant list, from status 'create'=>'active' when created
-            const newVariants = cleanFullProduct.variants.map(
-                (prod) =>
-                    new VariantProductClass({ ...prod, status: "active" }),
-            );
-            setVariantProducts((prev) => [...prev, ...newVariants]);
+            initialize(); // Refresh data after creation
+            return true;
         } catch (error) {
             console.error(error);
+            return false;
         }
     };
 
     const deleteProduct = async (mainProductUUID: string): Promise<void> => {
         try {
             await deleteFull(mainProductUUID);
-            setMainProducts((prev) =>
-                prev.filter((prod) => prod.uuid !== mainProductUUID),
-            );
-            setVariantProducts((prev) =>
-                prev.filter((prod) => prod.mainProduct !== mainProductUUID),
-            );
+            initialize(); // Refresh data after deletion
         } catch (error) {
             console.error(error);
         }
@@ -115,50 +94,22 @@ export function ProductProvider({ children }: Props) {
             if (fullProduct.status === "update") {
                 // send update request
                 await updateMain(fullProduct);
-                // update main list
-                setMainProducts((prev) =>
-                    prev.map((item) =>
-                        item.uuid === fullProduct.uuid
-                            ? ({
-                                  ...fullProduct,
-                                  status: "active",
-                              } as MainProductClass)
-                            : item,
-                    ),
-                );
             }
 
             // handle variants as it should
             if (createVariantsList.length > 0) {
                 // send create variants request
                 await createVariants(createVariantsList);
-                // add new variants to the list
-                setVariantProducts((prev) => [...prev, ...createVariantsList]);
             }
             if (updateVariantsList.length > 0) {
                 // send update variants request
                 await updateVaraints(updateVariantsList);
-                // add update variants list
-                setVariantProducts((prev) =>
-                    prev.map((prod) => {
-                        const update = updateVariantsList.find(
-                            (item) => item.uuid === prod.uuid,
-                        );
-                        return update ? update : prod;
-                    }),
-                );
             }
             if (deleteVariantsList.length > 0) {
                 // send delete variants request
                 await deleteVariants(deleteVariantsList);
-                // remove delete variants from the list
-                setVariantProducts((prev) => {
-                    const deleteUUIDs = new Set(
-                        deleteVariantsList.map((del) => del.uuid),
-                    );
-                    return prev.filter((item) => !deleteUUIDs.has(item.uuid));
-                });
             }
+            initialize(); // Refresh data after update
         } catch (error) {
             console.error(error);
         }
@@ -170,8 +121,8 @@ export function ProductProvider({ children }: Props) {
     return (
         <ProductContext.Provider
             value={{
-                mainProducts,
-                variantProducts,
+                fullProducts,
+                initialize,
                 createNewProduct,
                 deleteProduct,
                 updateFullProduct,

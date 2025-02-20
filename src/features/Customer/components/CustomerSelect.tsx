@@ -7,16 +7,15 @@ import {
 } from "@mui/material";
 import { getAllCustomers } from "../services";
 import { useEffect, useState } from "react";
-import { CustomerType } from "../types";
 import { useCart } from "../../Sale/useCart";
+import type { CustomerType } from "../types";
 
 type Props = {
-    selectedCustomer: string;
     sendValue: (uuid: string) => void;
 };
 
-export default function CustomerSelect({ selectedCustomer, sendValue }: Props) {
-    const { saleOrder, updateCustomer } = useCart();
+export default function CustomerSelect({ sendValue }: Props) {
+    const { order, updateCustomer } = useCart();
     const [customers, setCustomers] = useState<CustomerType[]>([]);
 
     const initialize = async () => {
@@ -36,7 +35,7 @@ export default function CustomerSelect({ selectedCustomer, sendValue }: Props) {
             <InputLabel id="Customer">Customer</InputLabel>
             <Select
                 id="Customer"
-                value={saleOrder.customerUUID}
+                value={order.customerUUID}
                 labelId="Customer"
                 label="Customer"
                 onChange={handleChange}

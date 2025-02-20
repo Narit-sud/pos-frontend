@@ -4,6 +4,24 @@ import { FullProductClass } from "../class";
 import { ApiResponse } from "../../../_interfaces/ApiResponse";
 import { checkAuthError } from "../utils";
 
+export async function getFull(): Promise<FullProductClass[]> {
+    console.log("get full service");
+    try {
+        const { data } = await axios.get<ApiResponse<FullProductClass[]>>(
+            `${MAIN_URL}/product/full/`,
+            {
+                withCredentials: true,
+            },
+        );
+        return data.data;
+    } catch (error) {
+        if (isAxiosError(error)) {
+            checkAuthError(error);
+        }
+        throw error;
+    }
+}
+
 export async function createFull(fullProduct: FullProductClass): Promise<void> {
     console.log("create full service");
 

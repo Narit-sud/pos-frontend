@@ -3,7 +3,6 @@ import { AuthProvider } from "./features/Auth/useAuth";
 import { ProductProvider } from "./features/Product/index";
 import { CategoryProvider } from "./features/Category/index";
 import { CustomerProvider } from "./features/Customer/useCustomer";
-import { CartProvider } from "./features/Sale/useCart";
 
 type Props = {
     children: ReactNode;
@@ -14,9 +13,7 @@ function Providers({ children }: Props) {
         <AuthProvider>
             <ProductProvider>
                 <CategoryProvider>
-                    <CustomerProvider>
-                        <CartProvider>{children}</CartProvider>
-                    </CustomerProvider>
+                    <CustomerProvider>{children}</CustomerProvider>
                 </CategoryProvider>
             </ProductProvider>
         </AuthProvider>

@@ -1,25 +1,19 @@
 import {
-    Badge,
     Box,
-    Button,
+    Badge,
     Card,
-    CardContent,
     Container,
-    Divider,
     Grid2,
-    Stack,
-    Typography,
+    Button,
+    Divider,
 } from "@mui/material";
 import { ShoppingCart } from "@mui/icons-material";
-import { useCart } from "../useCart";
+import { CustomModal } from "../../../_components/CustomModal";
 import { useProduct } from "../../Product";
 import { FullProductClass } from "../../Product/class";
 import { useState } from "react";
-import { CustomModal } from "../../../_components/CustomModal";
-import { ProductSelect } from "../components/ProductSelect";
-import { CartDisplay } from "../components/CartDisplay";
 
-export default function SalePage() {
+export function POSDisplay() {
     const { mainProducts, variantProducts } = useProduct();
     const fullProduct = mainProducts.map((prod) => ({
         ...prod,
@@ -27,22 +21,11 @@ export default function SalePage() {
             (item) => item.mainProduct === prod.uuid,
         ),
     })) as FullProductClass[];
-    const { currentCart, addToCart } = useCart();
-    const [selectingProd, setSelectingProd] = useState<FullProductClass>(
-        new FullProductClass(),
-    );
-    const [selectModalOpen, setSelectModalOpen] = useState<boolean>(false);
-    const selectOpen = () => setSelectModalOpen(true);
-    const selectClose = () => setSelectModalOpen(false);
 
-    const [cartModalOpen, setCartModalOpen] = useState<boolean>(false);
-    const cartOpen = () => setCartModalOpen(true);
-    const cartClose = () => setCartModalOpen(false);
+    const [cartOpen, setCartOpen] = useState<boolean>(false);
+    const [chargeOpen, setChargeOpen] = useState<boolean>(false);
 
-    const handleProductClick = (prod: FullProductClass) => {
-        setSelectingProd(prod);
-        selectOpen();
-    };
+    const handleProductClick = (product: FullProductClass) => {};
 
     return (
         <Container>
@@ -53,7 +36,10 @@ export default function SalePage() {
                 <Button type="button" variant="outlined">
                     Back
                 </Button>
-                <Button sx={{ position: "relative" }} onClick={cartOpen}>
+                <Button
+                    sx={{ position: "relative" }}
+                    onClick={() => setCartOpen(true)}
+                >
                     <ShoppingCart />
                     <Badge
                         badgeContent={currentCart.length}
