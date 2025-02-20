@@ -11,81 +11,42 @@ import CategoryPage from "./features/Category/pages/CategoryPage.tsx";
 import { AuthProvider } from "./features/Auth/useAuth.tsx";
 import ProductForm from "./features/Product/pages/ProductFormPage.tsx";
 import CustomerPage from "./features/Customer/pages/CustomerPage.tsx";
-import { CartProvider } from "./features/PointOfSale/useCart.tsx";
-import { SupplierPage, SupplierProvider } from "./features/Supplier/index.ts";
+import { SupplierPage } from "./features/Supplier/index.ts";
 import { POSDisplay } from "./features/PointOfSale/pages/POSDisplay";
+import AppLayout from "./layouts/AppLayout.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
         <BrowserRouter>
             <Routes>
-                <Route path="/">
+                <Route
+                    path="/"
+                    element={
+                        <Providers>
+                            <AppLayout />
+                        </Providers>
+                    }
+                >
                     <Route index element={<HomePage />} />
 
+                    <Route path="/pos">
+                        <Route index element={<POSDisplay />} />
+                    </Route>
+
                     <Route path="/product">
-                        <Route
-                            index
-                            element={
-                                <Providers>
-                                    <ProductPage />
-                                </Providers>
-                            }
-                        />
-                        <Route
-                            path=":uuid"
-                            element={
-                                <Providers>
-                                    <ProductForm />
-                                </Providers>
-                            }
-                        />
+                        <Route index element={<ProductPage />} />
+                        <Route path=":uuid" element={<ProductForm />} />
                     </Route>
 
                     <Route path="/customer">
-                        <Route
-                            index
-                            element={
-                                <Providers>
-                                    <CustomerPage />
-                                </Providers>
-                            }
-                        ></Route>
+                        <Route index element={<CustomerPage />} />
                     </Route>
 
                     <Route path="/supplier">
-                        <Route
-                            index
-                            element={
-                                <Providers>
-                                    <SupplierProvider>
-                                        <SupplierPage />
-                                    </SupplierProvider>
-                                </Providers>
-                            }
-                        />
+                        <Route index element={<SupplierPage />} />
                     </Route>
 
-                    <Route path="/pos">
-                        <Route
-                            index
-                            element={
-                                <Providers>
-                                    <CartProvider>
-                                        <POSDisplay />
-                                    </CartProvider>
-                                </Providers>
-                            }
-                        />
-                    </Route>
-
-                    <Route
-                        path="/category"
-                        element={
-                            <Providers>
-                                <CategoryPage />
-                            </Providers>
-                        }
-                    />
+                    <Route path="/category" element={<CategoryPage />} />
                 </Route>
 
                 <Route path="/auth">

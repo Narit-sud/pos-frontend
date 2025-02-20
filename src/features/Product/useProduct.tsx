@@ -20,6 +20,7 @@ type Props = {
 
 type ProductContextType = {
     fullProducts: FullProductClass[] | null;
+    isLoading: boolean;
     initialize: () => Promise<void>;
     createNewProduct: (product: FullProductClass) => Promise<boolean>;
     deleteProduct: (mainProductUUID: string) => Promise<void>;
@@ -32,86 +33,92 @@ export function ProductProvider({ children }: Props) {
     const [fullProducts, setFullProducts] = useState<FullProductClass[] | null>(
         null,
     );
+    const [isLoading, setIsLoading] = useState(false);
 
     const initialize = async () => {
-        const product = await getFull();
-        setFullProducts(product);
+        setIsLoading(true);
+        try {
+            const product = await getFull();
+            setFullProducts(product);
+        } catch (error) {
+            console.error("Failed to fetch products:", error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const createNewProduct = async (
         fullProduct: FullProductClass,
     ): Promise<boolean> => {
-        // filter variants with status !== 'create' out
-        const cleanFullProduct = {
-            ...fullProduct,
-            variants: fullProduct.variants.filter(
-                (prod) => prod.status === "create",
-            ),
-        };
+        setIsLoading(true);
         try {
-            console.log("useProduct/createNewProduct");
-
-            // create request
+            const cleanFullProduct = {
+                ...fullProduct,
+                variants: fullProduct.variants.filter(
+                    (prod) => prod.status === "create",
+                ),
+            };
             await createFull(cleanFullProduct);
-            initialize(); // Refresh data after creation
+            await initialize();
             return true;
         } catch (error) {
-            console.error(error);
-            return false;
+            console.error("Failed to create product:", error);
+            throw error;
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const deleteProduct = async (mainProductUUID: string): Promise<void> => {
+        setIsLoading(true);
         try {
             await deleteFull(mainProductUUID);
-            initialize(); // Refresh data after deletion
+            await initialize();
         } catch (error) {
-            console.error(error);
+            console.error("Failed to delete product:", error);
+            throw error;
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const updateFullProduct = async (
         fullProduct: FullProductClass,
     ): Promise<void> => {
-        // filter what to update
-        const updateVariantsList = fullProduct.variants.filter(
-            (prod) => prod.status === "update",
-        );
-        console.log(updateVariantsList);
-
-        // filter what to delete
-        const deleteVariantsList = fullProduct.variants.filter(
-            (prod) => prod.status === "delete",
-        );
-        console.log(deleteVariantsList);
-        // filter what to create
-        const createVariantsList = fullProduct.variants.filter(
-            (prod) => prod.status === "create",
-        );
-        console.log(createVariantsList);
+        setIsLoading(true);
         try {
-            // update main
-            if (fullProduct.status === "update") {
-                // send update request
-                await updateMain(fullProduct);
-            }
+            const updateVariantsList = fullProduct.variants.filter(
+                (prod) => prod.status === "update",
+            );
+            const deleteVariantsList = fullProduct.variants.filter(
+                (prod) => prod.status === "delete",
+            );
+            const createVariantsList = fullProduct.variants.filter(
+                (prod) => prod.status === "create",
+            );
 
-            // handle variants as it should
+            const operations = [];
+
+            if (fullProduct.status === "update") {
+                operations.push(updateMain(fullProduct));
+            }
             if (createVariantsList.length > 0) {
-                // send create variants request
-                await createVariants(createVariantsList);
+                operations.push(createVariants(createVariantsList));
             }
             if (updateVariantsList.length > 0) {
-                // send update variants request
-                await updateVaraints(updateVariantsList);
+                operations.push(updateVaraints(updateVariantsList));
             }
             if (deleteVariantsList.length > 0) {
-                // send delete variants request
-                await deleteVariants(deleteVariantsList);
+                operations.push(deleteVariants(deleteVariantsList));
             }
-            initialize(); // Refresh data after update
+
+            await Promise.all(operations);
+            await initialize();
         } catch (error) {
-            console.error(error);
+            console.error("Failed to update product:", error);
+            throw error;
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -122,6 +129,7 @@ export function ProductProvider({ children }: Props) {
         <ProductContext.Provider
             value={{
                 fullProducts,
+                isLoading,
                 initialize,
                 createNewProduct,
                 deleteProduct,

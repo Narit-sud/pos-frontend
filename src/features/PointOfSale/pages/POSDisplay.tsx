@@ -2,12 +2,13 @@ import {
     Box,
     Badge,
     Card,
-    CardContent,
     Typography,
     Container,
-    Grid2,
+    Grid2 as Grid,
     Button,
     Divider,
+    CardActionArea,
+    Avatar,
 } from "@mui/material";
 import { ShoppingCart } from "@mui/icons-material";
 import { CustomModal } from "../../../_components/CustomModal";
@@ -67,8 +68,7 @@ export function POSDisplay() {
     };
 
     return (
-        <Container>
-            {/* Header */}
+        <Container maxWidth="xl">
             <Box
                 sx={{ my: 2, display: "flex", justifyContent: "space-between" }}
             >
@@ -76,6 +76,7 @@ export function POSDisplay() {
                     Back
                 </Button>
                 <Button
+                    variant="contained"
                     sx={{ position: "relative" }}
                     onClick={() => setCartOpen(true)}
                 >
@@ -83,33 +84,83 @@ export function POSDisplay() {
                     <Badge
                         badgeContent={currentCart.length}
                         color="secondary"
-                        sx={{ position: "absolute", top: "0", right: "10px" }}
+                        sx={{
+                            position: "absolute",
+                            top: "-8px",
+                            right: "-8px",
+                        }}
                     />
                 </Button>
             </Box>
-            <Divider />
-            {/* Product Display */}
-            <Grid2 container sx={{ gap: 1 }}>
-                {fullProducts?.map((prod) => {
-                    return (
-                        <Grid2
-                            key={prod.uuid + "display"}
-                            size={3}
-                            onClick={() => handleProductClick(prod)}
+            <Divider sx={{ mb: 3 }} />
+
+            {/* Product Grid */}
+            <Grid container spacing={2}>
+                {fullProducts?.map((prod) => (
+                    <Grid
+                        size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+                        key={prod.uuid}
+                    >
+                        <Card
+                            sx={{
+                                height: "100%",
+                                transition: "transform 0.2s",
+                                "&:hover": {
+                                    transform: "scale(1.02)",
+                                    boxShadow: 3,
+                                },
+                            }}
                         >
-                            <Card>
-                                <CardContent>
-                                    <Typography>{prod.name}</Typography>
-                                    <Typography>
-                                        {prod.variantCount} options
+                            <CardActionArea
+                                onClick={() => handleProductClick(prod)}
+                                sx={{ height: "100%", p: 1 }}
+                            >
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: 1,
+                                    }}
+                                >
+                                    <Avatar
+                                        sx={{
+                                            bgcolor: "primary.main",
+                                            width: 40,
+                                            height: 40,
+                                            mr: 1,
+                                        }}
+                                    >
+                                        {prod.name.charAt(0)}
+                                    </Avatar>
+                                    <Typography variant="h6" noWrap>
+                                        {prod.name}
                                     </Typography>
-                                </CardContent>
-                            </Card>
-                        </Grid2>
-                    );
-                })}
-            </Grid2>
-            {/* Select Modal */}
+                                </Box>
+                                <Divider sx={{ my: 1 }} />
+                                <Box sx={{ px: 1 }}>
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                        sx={{ mb: 1 }}
+                                    >
+                                        {prod.variantCount} variants available
+                                    </Typography>
+                                    <Typography variant="body2" color="primary">
+                                        From ฿
+                                        {Math.min(
+                                            ...prod.variants.map(
+                                                (v) => v.price,
+                                            ),
+                                        )}
+                                    </Typography>
+                                </Box>
+                            </CardActionArea>
+                        </Card>
+                    </Grid>
+                ))}
+            </Grid>
+
+            {/* Modals */}
             {selectingOpen && selectedProduct && (
                 <CustomModal
                     open={selectingOpen}
@@ -123,7 +174,6 @@ export function POSDisplay() {
                     />
                 </CustomModal>
             )}
-            {/* Cart Modal */}
             {cartOpen && (
                 <CustomModal
                     open={cartOpen}

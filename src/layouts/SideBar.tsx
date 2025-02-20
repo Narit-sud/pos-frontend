@@ -1,81 +1,60 @@
-import ListSubheader from "@mui/material/ListSubheader"
-import List from "@mui/material/List"
-import ListItemButton from "@mui/material/ListItemButton"
-import ListItemIcon from "@mui/material/ListItemIcon"
-import ListItemText from "@mui/material/ListItemText"
-import Collapse from "@mui/material/Collapse"
-import InboxIcon from "@mui/icons-material/MoveToInbox"
-import DraftsIcon from "@mui/icons-material/Drafts"
-import SendIcon from "@mui/icons-material/Send"
-import ExpandLess from "@mui/icons-material/ExpandLess"
-import ExpandMore from "@mui/icons-material/ExpandMore"
-import StarBorder from "@mui/icons-material/StarBorder"
-import { Button, Drawer } from "@mui/material"
-import { useState } from "react"
+import {
+    Drawer,
+    List,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Box,
+} from "@mui/material";
+import { Home, ShoppingCart, People, Inventory } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
-export default function NestedList() {
-    const [bigOpen, setBigOpen] = useState(false)
-    const [open, setOpen] = useState(true)
+interface SideBarProps {
+    open: boolean;
+    onClose: () => void;
+}
 
-    const handleClick = () => {
-        setOpen(!open)
-    }
+export function SideBar({ open, onClose }: SideBarProps) {
+    const navigate = useNavigate();
 
-    const handleBigClick = () => {
-        setBigOpen(!bigOpen)
-    }
+    const menuItems = [
+        { text: "Home", icon: <Home />, path: "/" },
+        { text: "Point of Sale", icon: <ShoppingCart />, path: "/pos" },
+        { text: "Products", icon: <Inventory />, path: "/product" }, // Changed from /products
+        { text: "Customers", icon: <People />, path: "/customer" }, // Changed from /customers
+    ];
+
+    const handleNavigation = (path: string) => {
+        navigate(path);
+        onClose();
+    };
 
     return (
-        <Button onClick={handleBigClick}>
-            <Drawer open={bigOpen} variant="permanent">
-                <List
-                    sx={{
-                        width: "100%",
-                        maxWidth: 360,
-                        bgcolor: "background.paper",
-                    }}
-                    component="nav"
-                    aria-labelledby="nested-list-subheader"
-                    subheader={
-                        <ListSubheader
-                            component="div"
-                            id="nested-list-subheader"
+        <Drawer
+            anchor="left"
+            open={open}
+            onClose={onClose}
+            sx={{
+                "& .MuiDrawer-paper": {
+                    width: 240,
+                    bgcolor: "background.default",
+                },
+            }}
+        >
+            <Box sx={{ mt: 7 }}>
+                <List>
+                    {menuItems.map((item) => (
+                        <ListItemButton
+                            key={item.text}
+                            onClick={() => handleNavigation(item.path)}
                         >
-                            Nested List Items
-                        </ListSubheader>
-                    }
-                >
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <SendIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Sent mail" />
-                    </ListItemButton>
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <DraftsIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Drafts" />
-                    </ListItemButton>
-                    <ListItemButton onClick={handleClick}>
-                        <ListItemIcon>
-                            <InboxIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Inbox" />
-                        {open ? <ExpandLess /> : <ExpandMore />}
-                    </ListItemButton>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <List component="div" disablePadding>
-                            <ListItemButton sx={{ pl: 4 }}>
-                                <ListItemIcon>
-                                    <StarBorder />
-                                </ListItemIcon>
-                                <ListItemText primary="Starred" />
-                            </ListItemButton>
-                        </List>
-                    </Collapse>
+                            <ListItemIcon>{item.icon}</ListItemIcon>
+                            <ListItemText primary={item.text} />
+                        </ListItemButton>
+                    ))}
                 </List>
-            </Drawer>
-        </Button>
-    )
+            </Box>
+        </Drawer>
+    );
 }

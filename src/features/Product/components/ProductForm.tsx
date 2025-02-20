@@ -3,9 +3,18 @@ import {
     Badge,
     Box,
     Button,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     FormControl,
+    Paper,
     SelectChangeEvent,
+    Snackbar,
     TextField,
+    Alert,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { VariantProductForm } from "./VariantProductForm";
@@ -20,9 +29,22 @@ type Props = {
 
 export function ProductForm({ existedProductUUID }: Props) {
     const navigate = useNavigate();
-    const { fullProducts, createNewProduct, deleteProduct, updateFullProduct } =
-        useProduct();
+    const {
+        fullProducts,
+        createNewProduct,
+        deleteProduct,
+        updateFullProduct,
+        isLoading,
+    } = useProduct();
     const [product, setProduct] = useState<FullProductClass>();
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [openDialog, setOpenDialog] = useState(false);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: "",
+        severity: "success" as "success" | "error",
+    });
+    const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         if (existedProductUUID !== "new") {
@@ -40,7 +62,22 @@ export function ProductForm({ existedProductUUID }: Props) {
         }
     }, [existedProductUUID, fullProducts]);
 
+    const validateForm = () => {
+        const newErrors: { [key: string]: string } = {};
+        if (!product?.name) newErrors.name = "Name is required";
+        if (!product?.category) newErrors.category = "Category is required";
+        if (
+            product?.variants.some((v) => !v.name || v.price < 0 || v.cost < 0)
+        ) {
+            newErrors.variants =
+                "All variants must have a name and valid prices";
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
         const { id, name, value } = e.target;
         if (id === "main") {
             setProduct((prev) =>
@@ -156,113 +193,217 @@ export function ProductForm({ existedProductUUID }: Props) {
         });
     };
 
-    const handleRemoveMainButton = async () => {
+    const handleRemoveMainButton = () => {
+        setOpenDialog(true);
+    };
+
+    const handleConfirmDelete = async () => {
         if (existedProductUUID) {
             try {
                 await deleteProduct(existedProductUUID);
-                navigate(-1);
+                setSnackbar({
+                    open: true,
+                    message: "Product deleted successfully",
+                    severity: "success",
+                });
+                setTimeout(() => navigate(-1), 1000);
             } catch (error) {
-                alert("Delete this product failed");
+                setSnackbar({
+                    open: true,
+                    message: "Failed to delete product",
+                    severity: "error",
+                });
             }
         }
+        setOpenDialog(false);
     };
 
     const handleSaveButton = async () => {
-        if (!product) return;
+        if (!product || !validateForm()) return;
 
+        setIsSaving(true);
         try {
             if (existedProductUUID === "new") {
                 const success = await createNewProduct(product);
                 if (success) {
-                    navigate(-1);
-                } else {
-                    alert("Save product failed");
+                    setSnackbar({
+                        open: true,
+                        message: "Product created successfully",
+                        severity: "success",
+                    });
+                    setTimeout(() => navigate(-1), 1000);
                 }
             } else {
                 await updateFullProduct(product);
-                navigate(-1);
+                setSnackbar({
+                    open: true,
+                    message: "Product updated successfully",
+                    severity: "success",
+                });
+                setTimeout(() => navigate(-1), 1000);
             }
         } catch (error) {
-            alert("Save product failed");
+            setSnackbar({
+                open: true,
+                message: "Failed to save product",
+                severity: "error",
+            });
+        } finally {
+            setIsSaving(false);
         }
     };
 
+    if (isLoading) {
+        return (
+            <Box display="flex" justifyContent="center" my={4}>
+                <CircularProgress />
+            </Box>
+        );
+    }
+
     return (
-        <Box
-            sx={{
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-                p: 5,
-            }}
-        >
-            <FormControl>
+        <Box sx={{ maxWidth: 800, mx: "auto", py: 4 }}>
+            <Paper elevation={2} sx={{ p: 3 }}>
+                <FormControl fullWidth>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 2,
+                        }}
+                    >
+                        <TextField
+                            id="main"
+                            name="name"
+                            label="Name"
+                            value={product?.name}
+                            onChange={handleChange}
+                            error={!!errors.name}
+                            helperText={errors.name}
+                            required
+                        />
+                        <CategorySelect
+                            value={product?.category || ""}
+                            onChange={handleSelectChange}
+                            error={!!errors.category}
+                            helperText={errors.category}
+                        />
+                        <TextField
+                            id="main"
+                            name="detail"
+                            label="Detail"
+                            value={product?.detail}
+                            onChange={handleChange}
+                            multiline
+                            rows={3}
+                        />
+                        <Button
+                            type="button"
+                            variant="outlined"
+                            onClick={handleAddButton}
+                            startIcon={
+                                <Badge
+                                    badgeContent={product?.variantCount}
+                                    color="primary"
+                                />
+                            }
+                        >
+                            Add Option
+                        </Button>
+                    </Box>
+                </FormControl>
+
+                {errors.variants && (
+                    <Alert severity="error" sx={{ mt: 2 }}>
+                        {errors.variants}
+                    </Alert>
+                )}
+
+                <VariantProductForm
+                    variants={product?.variants || []}
+                    handleRemove={handleRemoveVariantButton}
+                    handleUndo={handleReverseButton}
+                    handleChange={handleChange}
+                />
+
                 <Box
                     sx={{
                         display: "flex",
-                        flexDirection: "column",
+                        gap: 2,
                         justifyContent: "center",
-                        gap: 1,
+                        mt: 4,
                     }}
                 >
-                    <TextField
-                        id="main"
-                        name="name"
-                        label="Name"
-                        value={product?.name}
-                        onChange={handleChange}
-                    />
-                    <CategorySelect
-                        value={product?.category || ""}
-                        onChange={handleSelectChange}
-                    />
-                    <TextField
-                        id="main"
-                        name="detail"
-                        label="Detail"
-                        value={product?.detail}
-                        onChange={handleChange}
-                    />
+                    <Button variant="contained" onClick={handleSaveButton}>
+                        Save
+                    </Button>
                     <Button
-                        type="button"
                         variant="outlined"
-                        onClick={handleAddButton}
+                        onClick={() => navigate("/product")}
                     >
-                        Add Option
-                        <Badge
-                            badgeContent={product?.variantCount}
-                            color="primary"
-                            sx={{ ml: 2 }}
-                        />
+                        Cancel
                     </Button>
+                    {existedProductUUID && existedProductUUID !== "new" && (
+                        <Button
+                            color="error"
+                            variant="outlined"
+                            onClick={handleRemoveMainButton}
+                        >
+                            Remove
+                        </Button>
+                    )}
                 </Box>
-            </FormControl>
-            <VariantProductForm
-                variants={product?.variants || []}
-                handleRemove={handleRemoveVariantButton}
-                handleUndo={handleReverseButton}
-                handleChange={handleChange}
-            />
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: 1,
-                    justifyContent: "center",
-                }}
-            >
-                <Button variant="contained" onClick={handleSaveButton}>
-                    Save
-                </Button>
-                <Button variant="outlined" onClick={() => navigate("/product")}>
-                    Cancel
-                </Button>
-                {existedProductUUID && existedProductUUID !== "new" && (
-                    <Button variant="text" onClick={handleRemoveMainButton}>
-                        Remove
+            </Paper>
+
+            <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                <DialogTitle>Confirm Delete</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to delete this product? This
+                        action cannot be undone.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+                    <Button onClick={handleConfirmDelete} color="error">
+                        Delete
                     </Button>
-                )}
-            </Box>
+                </DialogActions>
+            </Dialog>
+
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={() =>
+                    setSnackbar((prev) => ({ ...prev, open: false }))
+                }
+            >
+                <Alert
+                    severity={snackbar.severity}
+                    onClose={() =>
+                        setSnackbar((prev) => ({ ...prev, open: false }))
+                    }
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
+
+            {(isLoading || isSaving) && (
+                <Box
+                    position="fixed"
+                    top={0}
+                    left={0}
+                    right={0}
+                    bottom={0}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    bgcolor="rgba(255, 255, 255, 0.7)"
+                    zIndex={9999}
+                >
+                    <CircularProgress />
+                </Box>
+            )}
         </Box>
     );
 }

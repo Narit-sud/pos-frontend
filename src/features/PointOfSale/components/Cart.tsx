@@ -10,6 +10,8 @@ import { Delete } from "@mui/icons-material";
 import { CartItemType } from "../types";
 import { CustomerSelect } from "./CustomerSelect";
 import { useCart } from "../useCart";
+import { Charge } from "./Charge";
+import { useState } from "react";
 
 interface CartProps {
     cartItems: CartItemType[];
@@ -32,6 +34,23 @@ export function Cart({
         loadedFromUUID,
         isCartModified,
     } = useCart();
+    const [showCharge, setShowCharge] = useState(false);
+
+    const handleChargeConfirm = () => {
+        setShowCharge(false);
+        clearCart();
+        onCancel();
+    };
+
+    if (showCharge) {
+        return (
+            <Charge
+                total={grandTotal}
+                onConfirm={handleChargeConfirm}
+                onCancel={() => setShowCharge(false)}
+            />
+        );
+    }
 
     return (
         <Box sx={{ p: 2 }}>
@@ -76,11 +95,9 @@ export function Cart({
                 }}
             >
                 {cartItems.map((item) => (
-                    <>
+                    <Box component="div" key={item.uuid} sx={{ mb: 1 }}>
                         <Box
-                            key={item.uuid}
                             sx={{
-                                mb: 1,
                                 display: "flex",
                                 justifyContent: "space-between",
                                 alignItems: "flex-start",
@@ -109,7 +126,7 @@ export function Cart({
                             </IconButton>
                         </Box>
                         <Divider sx={{ my: 1 }} />
-                    </>
+                    </Box>
                 ))}
                 {cartItems.length === 0 && (
                     <Typography
@@ -144,7 +161,8 @@ export function Cart({
                     variant="contained"
                     color="primary"
                     fullWidth
-                    onClick={onCharge}
+                    onClick={() => setShowCharge(true)}
+                    disabled={cartItems.length === 0}
                 >
                     Charge
                 </Button>
