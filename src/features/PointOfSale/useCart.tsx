@@ -20,6 +20,8 @@ type CartContextType = {
     customerUUID: string;
     grandTotal: number;
     order: OrderType;
+    loadedFromUUID: string | undefined; // Added
+    isCartModified: boolean; // Added
     addToCart: (newItem: CartItemType) => void;
     updateCustomer: (newCustomerUUID: string) => void;
     removeFromCart: (removeItemUUID: string) => void;
@@ -181,6 +183,8 @@ export function CartProvider({ children }: Props) {
                 customerUUID,
                 grandTotal,
                 order,
+                loadedFromUUID,
+                isCartModified,
                 addToCart,
                 updateCustomer,
                 removeFromCart,

@@ -1,4 +1,4 @@
-import { CartItemType, OrderType } from "../types";
+import { CartItemType } from "../types";
 
 export const localCart = {
     get: (): CartItemType[] => {
