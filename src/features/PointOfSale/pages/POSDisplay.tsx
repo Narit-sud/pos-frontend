@@ -2,6 +2,8 @@ import {
     Box,
     Badge,
     Card,
+    CardContent,
+    Typography,
     Container,
     Grid2,
     Button,
@@ -12,20 +14,57 @@ import { CustomModal } from "../../../_components/CustomModal";
 import { useProduct } from "../../Product";
 import { FullProductClass } from "../../Product/class";
 import { useState } from "react";
+import { useCart } from "../useCart";
+import { Selecting } from "../components/Selecting";
+import { Cart } from "../components/Cart";
+import { v4 as uuidv4 } from "uuid";
+import type { CartItemType } from "../types";
+import { SavedCart } from "../components/SavedCart";
 
 export function POSDisplay() {
-    const { mainProducts, variantProducts } = useProduct();
-    const fullProduct = mainProducts.map((prod) => ({
-        ...prod,
-        variants: variantProducts.filter(
-            (item) => item.mainProduct === prod.uuid,
-        ),
-    })) as FullProductClass[];
+    const { fullProducts } = useProduct();
+    const { currentCart, addToCart, order } = useCart();
 
     const [cartOpen, setCartOpen] = useState<boolean>(false);
     const [chargeOpen, setChargeOpen] = useState<boolean>(false);
+    const [selectingOpen, setSelectingOpen] = useState<boolean>(false);
+    const [selectedProduct, setSelectedProduct] =
+        useState<FullProductClass | null>(null);
+    const [showSavedCarts, setShowSavedCarts] = useState(false);
 
-    const handleProductClick = (product: FullProductClass) => {};
+    const handleProductClick = (product: FullProductClass) => {
+        setSelectedProduct(product);
+        setSelectingOpen(true);
+    };
+
+    const handleSelectingSave = (
+        quantity: number,
+        variantId: string,
+        price: number,
+        total: number,
+    ) => {
+        if (!selectedProduct) return;
+
+        const variant = selectedProduct.variants.find(
+            (v) => v.uuid === variantId,
+        );
+        if (!variant) return;
+
+        const cartItem: CartItemType = {
+            uuid: uuidv4(),
+            mainName: selectedProduct.name,
+            variantUUID: variant.uuid,
+            variantName: variant.name,
+            qty: quantity,
+            price: price,
+            total: total,
+            receiptUUID: order.uuid,
+        };
+
+        addToCart(cartItem);
+        setSelectingOpen(false);
+        setSelectedProduct(null);
+    };
 
     return (
         <Container>
@@ -51,7 +90,7 @@ export function POSDisplay() {
             <Divider />
             {/* Product Display */}
             <Grid2 container sx={{ gap: 1 }}>
-                {fullProduct.map((prod) => {
+                {fullProducts?.map((prod) => {
                     return (
                         <Grid2
                             key={prod.uuid + "display"}
@@ -71,26 +110,39 @@ export function POSDisplay() {
                 })}
             </Grid2>
             {/* Select Modal */}
-            {selectModalOpen && (
+            {selectingOpen && selectedProduct && (
                 <CustomModal
-                    open={selectModalOpen}
-                    onClose={selectClose}
+                    open={selectingOpen}
+                    onClose={() => setSelectingOpen(false)}
                     width={500}
                 >
-                    <ProductSelect
-                        selectingProduct={selectingProd}
-                        handleSaveButton={addToCart}
+                    <Selecting
+                        product={selectedProduct}
+                        onSave={handleSelectingSave}
+                        onCancel={() => setSelectingOpen(false)}
                     />
                 </CustomModal>
             )}
             {/* Cart Modal */}
-            {cartModalOpen && (
+            {cartOpen && (
                 <CustomModal
-                    open={cartModalOpen}
-                    onClose={cartClose}
+                    open={cartOpen}
+                    onClose={() => {
+                        setCartOpen(false);
+                        setShowSavedCarts(false);
+                    }}
                     width={500}
                 >
-                    <CartDisplay />
+                    {showSavedCarts ? (
+                        <SavedCart onClose={() => setShowSavedCarts(false)} />
+                    ) : (
+                        <Cart
+                            cartItems={currentCart}
+                            onCharge={() => setCartOpen(true)}
+                            onCancel={() => setCartOpen(false)}
+                            onLoadCartClick={() => setShowSavedCarts(true)}
+                        />
+                    )}
                 </CustomModal>
             )}
         </Container>

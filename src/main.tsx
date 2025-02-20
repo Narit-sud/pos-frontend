@@ -10,10 +10,10 @@ import RegisterPage from "./features/Auth/Pages/RegisterPage.tsx";
 import CategoryPage from "./features/Category/pages/CategoryPage.tsx";
 import { AuthProvider } from "./features/Auth/useAuth.tsx";
 import ProductForm from "./features/Product/pages/ProductFormPage.tsx";
-import SalePage from "./features/Sale/pages/SalePage.tsx";
 import CustomerPage from "./features/Customer/pages/CustomerPage.tsx";
-import { CartProvider } from "./features/Sale/useCart.tsx";
+import { CartProvider } from "./features/PointOfSale/useCart.tsx";
 import { SupplierPage, SupplierProvider } from "./features/Supplier/index.ts";
+import { POSDisplay } from "./features/PointOfSale/pages/POSDisplay";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -65,17 +65,17 @@ createRoot(document.getElementById("root")!).render(
                         />
                     </Route>
 
-                    <Route path="/sale">
+                    <Route path="/pos">
                         <Route
                             index
                             element={
                                 <Providers>
                                     <CartProvider>
-                                        <SalePage />
+                                        <POSDisplay />
                                     </CartProvider>
                                 </Providers>
                             }
-                        ></Route>
+                        />
                     </Route>
 
                     <Route

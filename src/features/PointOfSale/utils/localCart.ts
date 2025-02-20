@@ -1,18 +1,18 @@
-import { SaleItemClass } from "../classes/SaleItemClass";
+import { CartItemType, OrderType } from "../types";
 
-export const localCurrentCart = {
-    get: (): SaleItemClass[] => {
+export const localCart = {
+    get: (): CartItemType[] => {
         const storedCart = localStorage.getItem("currentCart");
         return storedCart ? JSON.parse(storedCart) : [];
     },
-    set: (cart: SaleItemClass[]): void => {
+    set: (cart: CartItemType[]): void => {
         localStorage.setItem("currentCart", JSON.stringify(cart));
     },
     clear: (): void => {
         localStorage.setItem("currentCart", JSON.stringify([]));
     },
-    add: (newItem: SaleItemClass): void => {
-        let currentCart = localCurrentCart.get();
+    add: (newItem: CartItemType): void => {
+        let currentCart = localCart.get();
         let updatedCart = [];
 
         const existedItem = currentCart.find(
@@ -37,11 +37,11 @@ export const localCurrentCart = {
             updatedCart = [...currentCart, newItem];
         }
 
-        localCurrentCart.set(updatedCart);
+        localCart.set(updatedCart);
     },
     remove: (uuid: string): void => {
-        let currentCart = localCurrentCart.get();
+        let currentCart = localCart.get();
         currentCart.filter((item) => item.uuid !== uuid);
-        localCurrentCart.set(currentCart);
+        localCart.set(currentCart);
     },
 };
