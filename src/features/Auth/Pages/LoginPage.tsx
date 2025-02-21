@@ -34,7 +34,7 @@ function LoginPage() {
             await login(loginDetail);
             setAlertTag({ isOpen: true, message: "Login success!" });
             setTimeout(() => {
-                navigate("/app");
+                navigate("/");
             }, 2000);
         } catch (error) {
             setAlertTag({ isOpen: true, message: "Login failed" });
