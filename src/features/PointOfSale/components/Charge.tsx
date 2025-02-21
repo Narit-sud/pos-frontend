@@ -17,6 +17,7 @@ interface ChargeProps {
 
 export function Charge({ total, onConfirm, onCancel }: ChargeProps) {
     const [received, setReceived] = useState<number>(0);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const denominations = [1, 2, 5, 10, 20, 50, 100, 500, 1000];
     const needMore = total - received;
 
@@ -31,6 +32,18 @@ export function Charge({ total, onConfirm, onCancel }: ChargeProps) {
 
     const handleReset = () => {
         setReceived(0);
+    };
+
+    const handleConfirm = async () => {
+        if (needMore > 0 || isSubmitting) return;
+        setIsSubmitting(true);
+        try {
+            await onConfirm();
+        } catch (error) {
+            console.error("Failed to submit order:", error);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -161,16 +174,21 @@ export function Charge({ total, onConfirm, onCancel }: ChargeProps) {
                 <Button
                     variant="contained"
                     fullWidth
-                    onClick={onConfirm}
-                    disabled={needMore > 0}
+                    onClick={handleConfirm}
+                    disabled={needMore > 0 || isSubmitting}
                     sx={{ py: 2 }}
                 >
-                    {needMore > 0 ? "Insufficient Amount" : "Complete Payment"}
+                    {isSubmitting
+                        ? "Processing..."
+                        : needMore > 0
+                          ? "Insufficient Amount"
+                          : "Complete Payment"}
                 </Button>
                 <Button
                     variant="outlined"
                     fullWidth
                     onClick={onCancel}
+                    disabled={isSubmitting}
                     sx={{ py: 2 }}
                 >
                     Cancel

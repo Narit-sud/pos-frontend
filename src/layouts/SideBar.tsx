@@ -1,14 +1,17 @@
-import {
-    Drawer,
-    List,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    Box,
-} from "@mui/material";
-import { Home, ShoppingCart, People, Inventory } from "@mui/icons-material";
+import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import Inventory from "@mui/icons-material/Inventory";
+import Home from "@mui/icons-material/Home";
+import ShoppingCart from "@mui/icons-material/ShoppingCart";
+import People from "@mui/icons-material/People";
+import Assessment from "@mui/icons-material/Assessment";
+import AssignmentReturnedIcon from "@mui/icons-material/AssignmentReturned";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 
 interface SideBarProps {
     open: boolean;
@@ -21,9 +24,23 @@ export function SideBar({ open, onClose }: SideBarProps) {
     const menuItems = [
         { text: "Home", icon: <Home />, path: "/" },
         { text: "Point of Sale", icon: <ShoppingCart />, path: "/pos" },
-        { text: "Products", icon: <Inventory />, path: "/product" }, // Changed from /products
-        { text: "Customers", icon: <People />, path: "/customer" }, // Changed from /customers
+        { text: "Products", icon: <Inventory />, path: "/product" },
+        { text: "Customers", icon: <People />, path: "/customer" },
+        {
+            text: "Suppliers",
+            icon: <AccountBoxIcon />,
+            path: "/supplier",
+        },
+        { text: "Report", icon: <Assessment />, path: "/report" },
+        {
+            text: "Procurement",
+            icon: <AssignmentReturnedIcon />,
+            path: "/procurement",
+        },
     ];
+    //TODO: divide menu items into groups
+    const menuItemGroup1 = [];
+    const menuItemGroup2 = [];
 
     const handleNavigation = (path: string) => {
         navigate(path);

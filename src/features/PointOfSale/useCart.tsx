@@ -10,6 +10,7 @@ import { localOrder } from "./utils/localOrder";
 import { CartItemType } from "./types";
 import { v4 as uuidv4 } from "uuid";
 import { OrderType } from "./types";
+import { createOrder } from "./services/orderService";
 
 type Props = {
     children: ReactNode;
@@ -28,6 +29,8 @@ type CartContextType = {
     clearCart: () => void;
     saveCart: () => void;
     loadSavedOrder: (savedOrder: OrderType, forceClear?: boolean) => void;
+    updateCartItemQty: (itemUUID: string, newQty: number) => void;
+    submitOrder: (order: OrderType) => Promise<void>;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -156,6 +159,42 @@ export function CartProvider({ children }: Props) {
         }
     };
 
+    const updateCartItemQty = (itemUUID: string, newQty: number) => {
+        if (newQty < 1) return;
+
+        const updatedCart = currentCart.map((item) => {
+            if (item.uuid === itemUUID) {
+                return {
+                    ...item,
+                    qty: newQty,
+                    total: Number((newQty * item.price).toFixed(2)),
+                };
+            }
+            return item;
+        });
+
+        setCurrentCart(updatedCart);
+        localCart.set(updatedCart);
+        setIsCartModified(true);
+    };
+
+    const submitOrder = async (order: OrderType): Promise<void> => {
+        try {
+            await createOrder(order);
+            setCurrentCart([]);
+            localCart.clear();
+            setOrder({
+                uuid: uuidv4(),
+                customerUUID,
+                saleItems: [],
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            });
+        } catch (error) {
+            console.error("Error submitting order", error);
+        }
+    };
+
     useEffect(() => {
         // Load cart from localStorage on mount
         const savedCart = localCart.get();
@@ -191,6 +230,8 @@ export function CartProvider({ children }: Props) {
                 clearCart,
                 saveCart,
                 loadSavedOrder,
+                updateCartItemQty,
+                submitOrder,
             }}
         >
             {children}

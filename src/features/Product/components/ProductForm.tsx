@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { VariantProductForm } from "./VariantProductForm";
-import CategorySelect from "../../Category/components/CategorySelect";
+import CategorySelect from "./CategorySelect";
 import { useProduct } from "../useProduct";
 import { updateVariantCount } from "../utils";
 import { useNavigate } from "react-router";
@@ -206,7 +206,7 @@ export function ProductForm({ existedProductUUID }: Props) {
                     message: "Product deleted successfully",
                     severity: "success",
                 });
-                setTimeout(() => navigate(-1), 1000);
+                setTimeout(() => navigate(-1), 2000);
             } catch (error) {
                 setSnackbar({
                     open: true,
@@ -231,7 +231,7 @@ export function ProductForm({ existedProductUUID }: Props) {
                         message: "Product created successfully",
                         severity: "success",
                     });
-                    setTimeout(() => navigate(-1), 1000);
+                    setTimeout(() => navigate(-1), 2000);
                 }
             } else {
                 await updateFullProduct(product);
@@ -240,7 +240,7 @@ export function ProductForm({ existedProductUUID }: Props) {
                     message: "Product updated successfully",
                     severity: "success",
                 });
-                setTimeout(() => navigate(-1), 1000);
+                setTimeout(() => navigate(-1), 2000);
             }
         } catch (error) {
             setSnackbar({

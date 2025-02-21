@@ -1,8 +1,9 @@
 export interface CartItemType {
     uuid: string;
-    variantUUID: string;
+    mainUUID: string;
     mainName: string;
     variantName: string;
+    variantUUID: string;
     qty: number;
     price: number;
     total: number;

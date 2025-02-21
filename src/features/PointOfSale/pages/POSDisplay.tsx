@@ -53,6 +53,7 @@ export function POSDisplay() {
 
         const cartItem: CartItemType = {
             uuid: uuidv4(),
+            mainUUID: selectedProduct.uuid,
             mainName: selectedProduct.name,
             variantUUID: variant.uuid,
             variantName: variant.name,

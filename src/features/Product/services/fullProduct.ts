@@ -5,7 +5,6 @@ import { ApiResponse } from "../../../_interfaces/ApiResponse";
 import { checkAuthError } from "../utils";
 
 export async function getFull(): Promise<FullProductClass[]> {
-    console.log("get full service");
     try {
         const { data } = await axios.get<ApiResponse<FullProductClass[]>>(
             `${MAIN_URL}/product/full/`,
@@ -23,8 +22,6 @@ export async function getFull(): Promise<FullProductClass[]> {
 }
 
 export async function createFull(fullProduct: FullProductClass): Promise<void> {
-    console.log("create full service");
-
     try {
         const res = await axios.post<ApiResponse>(
             `${MAIN_URL}/product`,

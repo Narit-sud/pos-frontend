@@ -11,8 +11,7 @@ import {
     TableContainer,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { useProduct } from "../useProduct.tsx";
-import { useCategory } from "../../Category/useCategory.tsx";
+import { useProduct, useCategory } from "../index.ts";
 import { useNavigate } from "react-router";
 
 const headerStyle = {
@@ -42,15 +41,18 @@ export default function ProductTable() {
 
     return (
         <Paper elevation={2}>
-            <Box p={2}>
-                <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                    onClick={() => navigate("new")}
-                    sx={{ mb: 2 }}
+            <Box sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+                <Box
+                    sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}
                 >
-                    Create new product
-                </Button>
+                    <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        onClick={() => navigate("new")}
+                    >
+                        Create new product
+                    </Button>
+                </Box>
 
                 <TableContainer>
                     <Table>

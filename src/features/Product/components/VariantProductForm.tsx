@@ -86,6 +86,14 @@ export function VariantProductForm({
                                         onChange={handleNumberChange}
                                         inputProps={{ min: 0 }}
                                         fullWidth={isSingleVariant}
+                                        sx={{
+                                            "& input[type=number]::-webkit-inner-spin-button, & input[type=number]::-webkit-outer-spin-button":
+                                                {
+                                                    "-webkit-appearance":
+                                                        "none",
+                                                    margin: 0,
+                                                },
+                                        }}
                                     />
                                 </Grid2>
                                 <Grid2 size={isSingleVariant ? 12 : 1}>
@@ -96,7 +104,14 @@ export function VariantProductForm({
                                         label="Cost"
                                         value={prod.cost}
                                         onChange={handleNumberChange}
-                                        inputProps={{ min: 0 }}
+                                        sx={{
+                                            "& input[type=number]::-webkit-inner-spin-button, & input[type=number]::-webkit-outer-spin-button":
+                                                {
+                                                    "-webkit-appearance":
+                                                        "none",
+                                                    margin: 0,
+                                                },
+                                        }}
                                         fullWidth={isSingleVariant}
                                     />
                                 </Grid2>

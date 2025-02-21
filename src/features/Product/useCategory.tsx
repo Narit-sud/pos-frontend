@@ -5,11 +5,11 @@ import {
     useContext,
     ReactNode,
 } from "react";
-import type { Category } from "./types";
-import { getCategories } from "./services";
+import type { CategoryInterface } from "./interface";
+import { getCategories } from "./services/category";
 
 type CategoryContextType = {
-    categories: Category[];
+    categories: CategoryInterface[];
 };
 
 type Props = {
@@ -20,7 +20,7 @@ const CategoryContext = createContext<CategoryContextType | undefined>(
 );
 
 export function CategoryProvider({ children }: Props) {
-    const [categories, setCategories] = useState<Category[]>([]);
+    const [categories, setCategories] = useState<CategoryInterface[]>([]);
     async function loadCategories() {
         try {
             const categories = await getCategories();

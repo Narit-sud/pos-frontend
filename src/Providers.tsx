@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
 import { AuthProvider } from "./features/Auth/useAuth";
-import { ProductProvider } from "./features/Product/index";
-import { CategoryProvider } from "./features/Category/index";
+import { ProductProvider, CategoryProvider } from "./features/Product/index";
 import { CustomerProvider } from "./features/Customer/useCustomer";
 import { CartProvider } from "./features/PointOfSale/useCart";
 import { SupplierProvider } from "./features/Supplier";

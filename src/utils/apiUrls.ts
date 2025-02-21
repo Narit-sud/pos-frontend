@@ -20,7 +20,16 @@ export const CUSTOMER_URL = `${MAIN_URL}/customer`;
 export const CATEGORY_URL = `${MAIN_URL}/category`;
 // user
 export const USER_URL = `${MAIN_URL}/user`;
+export const USER_BY_USERNAME_URL = (username: string) =>
+    `${USER_URL}/username/${username}`;
 
 // testing
 export const TESTING_URL = `${MAIN_URL}/testing`;
 export const TESINT_COOKIE_URL = `${TESTING_URL}/cookie`;
+
+// order
+export const ORDER_URL = `${MAIN_URL}/order`;
+
+// productLog
+export const ORDER_PRODUCT_LOG_URL = `${MAIN_URL}/productLog/order`;
+export const PROCUREMENT_PRODUCT_LOG_URL = `${MAIN_URL}/productLog/procurement`;

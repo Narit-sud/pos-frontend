@@ -6,7 +6,7 @@ import {
     Divider,
     IconButton,
 } from "@mui/material";
-import { Delete } from "@mui/icons-material";
+import { Delete, Add, Remove } from "@mui/icons-material";
 import { CartItemType } from "../types";
 import { CustomerSelect } from "./CustomerSelect";
 import { useCart } from "../useCart";
@@ -20,12 +20,7 @@ interface CartProps {
     onLoadCartClick: () => void;
 }
 
-export function Cart({
-    cartItems,
-    onCharge,
-    onCancel,
-    onLoadCartClick,
-}: CartProps) {
+export function Cart({ cartItems, onCancel, onLoadCartClick }: CartProps) {
     const {
         removeFromCart,
         clearCart,
@@ -33,12 +28,28 @@ export function Cart({
         grandTotal,
         loadedFromUUID,
         isCartModified,
+        updateCartItemQty,
+        submitOrder,
+        customerUUID,
+        order,
     } = useCart();
     const [showCharge, setShowCharge] = useState(false);
 
-    const handleChargeConfirm = () => {
+    const handleChargeConfirm = async () => {
+        const orderToSubmit = {
+            ...order,
+            customerUUID,
+            // Ensure all items have matching receiptUUID
+            saleItems: cartItems.map((item) => ({
+                ...item,
+                receiptUUID: order.uuid,
+            })),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+        };
+
+        await submitOrder(orderToSubmit);
         setShowCharge(false);
-        clearCart();
         onCancel();
     };
 
@@ -108,13 +119,50 @@ export function Cart({
                                 <Typography>
                                     {item.mainName}: {item.variantName}
                                 </Typography>
-                                <Typography
-                                    variant="body2"
-                                    color="text.secondary"
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: 1,
+                                    }}
                                 >
-                                    Quantity: {item.qty} - Price: ${item.price}{" "}
-                                    - Total: ฿{item.total}
-                                </Typography>
+                                    <IconButton
+                                        size="small"
+                                        onClick={() =>
+                                            updateCartItemQty(
+                                                item.uuid,
+                                                item.qty - 1,
+                                            )
+                                        }
+                                        disabled={item.qty <= 1}
+                                    >
+                                        <Remove fontSize="small" />
+                                    </IconButton>
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                    >
+                                        Qty: {item.qty}
+                                    </Typography>
+                                    <IconButton
+                                        size="small"
+                                        onClick={() =>
+                                            updateCartItemQty(
+                                                item.uuid,
+                                                item.qty + 1,
+                                            )
+                                        }
+                                    >
+                                        <Add fontSize="small" />
+                                    </IconButton>
+                                    <Typography
+                                        variant="body2"
+                                        color="text.secondary"
+                                    >
+                                        - Price: ฿{item.price} - Total: ฿
+                                        {item.total}
+                                    </Typography>
+                                </Box>
                             </Box>
                             <IconButton
                                 color="error"

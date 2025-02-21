@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CATEGORY_URL } from "../../utils/apiUrls";
+import { CATEGORY_URL } from "../../../utils/apiUrls";
 
 export async function getCategories() {
     try {

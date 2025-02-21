@@ -23,7 +23,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [user, setUser] = useState<UserAuth>({} as UserAuth);
+    const [user, setUser] = useState<UserAuth | null>(null);
 
     const register = async (newUser: NewUser) => {
         try {
@@ -35,8 +35,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const login = async (loginDetail: LoginDetail) => {
         try {
-            await loginService(loginDetail);
-            await relogin();
+            const userData = await loginService(loginDetail);
+            setUser(userData);
+            window.location.href = "/product";
         } catch (error) {
             console.error(error);
         }
@@ -55,13 +56,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             const reloadUserData = await reloginService();
             setUser(reloadUserData);
         } catch (error) {
-            console.error(error);
+            console.error("Failed to reload user data:", error);
+            setUser(null);
+            if (window.location.pathname !== "/auth/login") {
+                window.location.href = "/auth/login";
+            }
         }
     };
 
-    // useEffect(() => {
-    //     relogin();
-    // }, []);
+    useEffect(() => {
+        relogin();
+    }, []);
+
     return (
         <AuthContext.Provider value={{ user, register, login, logout }}>
             {children}
