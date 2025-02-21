@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///Users/narit/Desktop/pos-frontend/src/app/testCookie/page.tsx"],"sourcesContent":["\"use client\";\nimport { useEffect } from \"react\";\nimport axios from \"axios\";\n\nexport default function Page() {\n    const test = async () => {\n        const res = await axios.get(\"http://localhost:3333/testCookie\", {\n            withCredentials: true,\n        });\n\n        console.log(res.data);\n    };\n    useEffect(() => {\n        test();\n    }, []);\n    return <div>testing cookie</div>;\n}\n"],"names":[],"mappings":";;;;AACA;AACA;;;AAFA;;;AAIe,SAAS;;IACpB,MAAM,OAAO;QACT,MAAM,MAAM,MAAM,wIAAA,CAAA,UAAK,CAAC,GAAG,CAAC,oCAAoC;YAC5D,iBAAiB;QACrB;QAEA,QAAQ,GAAG,CAAC,IAAI,IAAI;IACxB;IACA,CAAA,GAAA,6JAAA,CAAA,YAAS,AAAD;0BAAE;YACN;QACJ;yBAAG,EAAE;IACL,qBAAO,6LAAC;kBAAI;;;;;;AAChB;GAZwB;KAAA"}},
-    {"offset": {"line": 46, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
-}
