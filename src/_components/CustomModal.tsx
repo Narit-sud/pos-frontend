@@ -7,7 +7,12 @@ type Props = {
     onClose: () => void;
     width?: number;
 };
-export function CustomModal({ children, open, onClose, width = 1000 }: Props) {
+export default function CustomModal({
+    children,
+    open,
+    onClose,
+    width = 1000,
+}: Props) {
     return (
         <Modal
             open={open}

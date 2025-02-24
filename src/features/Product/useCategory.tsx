@@ -6,10 +6,18 @@ import {
     ReactNode,
 } from "react";
 import type { CategoryInterface } from "./interface";
-import { getCategories } from "./services/category";
+import {
+    getCategories,
+    createCategoryService,
+    updateCategoryService,
+    deleteCategoryService,
+} from "./services/category";
 
 type CategoryContextType = {
     categories: CategoryInterface[];
+    createCategory: (newCategory: CategoryInterface) => Promise<boolean>;
+    updateCategory: (updatedCategory: CategoryInterface) => Promise<boolean>;
+    deleteCategory: (category: CategoryInterface) => Promise<boolean>;
 };
 
 type Props = {
@@ -30,11 +38,51 @@ export function CategoryProvider({ children }: Props) {
         }
     }
 
+    async function createCategory(newCategory: CategoryInterface) {
+        try {
+            await createCategoryService(newCategory);
+            loadCategories();
+            return true;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    }
+
+    async function updateCategory(updatedCategory: CategoryInterface) {
+        try {
+            await updateCategoryService(updatedCategory);
+            loadCategories();
+            return true;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    }
+
+    async function deleteCategory(category: CategoryInterface) {
+        try {
+            await deleteCategoryService(category);
+            loadCategories();
+            return true;
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
+    }
+
     useEffect(() => {
         loadCategories();
     }, []);
     return (
-        <CategoryContext.Provider value={{ categories }}>
+        <CategoryContext.Provider
+            value={{
+                categories,
+                createCategory,
+                updateCategory,
+                deleteCategory,
+            }}
+        >
             {children}
         </CategoryContext.Provider>
     );
@@ -43,9 +91,7 @@ export function CategoryProvider({ children }: Props) {
 export function useCategory() {
     const context = useContext(CategoryContext);
     if (!context) {
-        throw new Error(
-            "Category context must be used within category provider tag",
-        );
+        throw new Error("useCategory must be used within a CategoryProvider");
     }
     return context;
 }

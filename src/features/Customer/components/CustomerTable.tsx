@@ -1,5 +1,4 @@
 import {
-    Button,
     Table,
     TableBody,
     TableCell,
@@ -9,7 +8,7 @@ import {
     Box,
     TableContainer,
 } from "@mui/material";
-import { useSupplier } from "../useSupplier";
+import { useCustomer } from "../useCustomer";
 
 const headerStyle = {
     textAlign: "center",
@@ -25,8 +24,8 @@ const bodyStyle = {
 
 const cellStyle = { textAlign: "center" };
 
-export function SupplierTable() {
-    const { suppliers } = useSupplier();
+export function CustomerTable() {
+    const { customers } = useCustomer();
 
     return (
         <Paper elevation={2}>
@@ -43,22 +42,22 @@ export function SupplierTable() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {suppliers?.map((supplier) => (
-                                <TableRow key={supplier.uuid} sx={bodyStyle}>
+                            {customers?.map((customer) => (
+                                <TableRow key={customer.uuid} sx={bodyStyle}>
                                     <TableCell sx={cellStyle}>
-                                        {supplier.name}
+                                        {customer.name}
                                     </TableCell>
                                     <TableCell sx={cellStyle}>
-                                        {supplier.surname}
+                                        {customer.surname}
                                     </TableCell>
                                     <TableCell sx={cellStyle}>
-                                        {supplier.phoneNumber}
+                                        {customer.phoneNumber}
                                     </TableCell>
                                     <TableCell sx={cellStyle}>
-                                        {supplier.email}
+                                        {customer.email}
                                     </TableCell>
                                     <TableCell sx={cellStyle}>
-                                        {supplier.detail}
+                                        {customer.detail}
                                     </TableCell>
                                 </TableRow>
                             ))}

@@ -26,6 +26,8 @@ const bodyStyle = {
     ":hover": { bgcolor: "action.hover" },
 };
 
+const cellStyle = { textAlign: "center" };
+
 export default function ProductTable() {
     const navigate = useNavigate();
     const { fullProducts, isLoading } = useProduct();
@@ -80,15 +82,19 @@ export default function ProductTable() {
                                         sx={bodyStyle}
                                         onClick={() => navigate(`${main.uuid}`)}
                                     >
-                                        <TableCell>{main.name}</TableCell>
-                                        <TableCell>
+                                        <TableCell sx={cellStyle}>
+                                            {main.name}
+                                        </TableCell>
+                                        <TableCell sx={cellStyle}>
                                             {categories?.find(
                                                 (cat) =>
                                                     cat.uuid === main.category,
                                             )?.name || "Category not found"}
                                         </TableCell>
-                                        <TableCell>{main.detail}</TableCell>
-                                        <TableCell align="center">
+                                        <TableCell sx={cellStyle}>
+                                            {main.detail}
+                                        </TableCell>
+                                        <TableCell sx={cellStyle}>
                                             {main.variantCount}
                                         </TableCell>
                                     </TableRow>

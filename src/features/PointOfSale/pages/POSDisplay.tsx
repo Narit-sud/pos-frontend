@@ -11,7 +11,7 @@ import {
     Avatar,
 } from "@mui/material";
 import { ShoppingCart } from "@mui/icons-material";
-import { CustomModal } from "../../../_components/CustomModal";
+import CustomModal from "../../../_components/CustomModal";
 import { useProduct } from "../../Product";
 import { FullProductClass } from "../../Product/class";
 import { useState } from "react";

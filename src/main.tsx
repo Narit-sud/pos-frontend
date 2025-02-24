@@ -16,6 +16,9 @@ import AppLayout from "./layouts/AppLayout.tsx";
 import ReportPage from "./features/Report/pages/ReportPage.tsx";
 import ProcurementPage from "./features/Procurement/pages/ProcurementPage.tsx";
 import ProcurementFormPage from "./features/Procurement/pages/ProcurementFormPage.tsx";
+import { ProcurementProvider } from "./features/Procurement/useProcurement.tsx";
+import SupplierFormPage from "./features/Supplier/pages/SupplierFormPage";
+import CustomerFormPage from "./features/Customer/pages/CustomerFormPage";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -42,10 +45,12 @@ createRoot(document.getElementById("root")!).render(
 
                     <Route path="/customer">
                         <Route index element={<CustomerPage />} />
+                        <Route path="new" element={<CustomerFormPage />} />
                     </Route>
 
                     <Route path="/supplier">
                         <Route index element={<SupplierPage />} />
+                        <Route path="new" element={<SupplierFormPage />} />
                     </Route>
 
                     <Route path="/report" element={<ReportPage />} />
